@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "aksara-lang"
+version = "0.1.0"
+description = "🇮🇩 Bahasa Pemrograman Indonesia Modern — interpreter mandiri, bukan transpiler"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "Joko Susilo", email = "Djokostiaji@email.com"}
+]
+keywords = ["aksara", "bahasa", "indonesia", "programming", "language", "interpreter"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: Apache Software License",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Topic :: Software Development :: Interpreters",
+]
+
+[project.scripts]
+aksara = "aksara.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/[USERNAME]/aksara-lang"
+Repository = "https://github.com/[USERNAME]/aksara-lang.git"
+Issues = "https://github.com/[USERNAME]/aksara-lang/issues"
