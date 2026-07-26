@@ -23,6 +23,6 @@ Fitur
 · Fungsi: fun, balik
 · Error: coba, kecuali, akhirnya, galat
 · Interop: impor modul Python
-- **String Template**: `"Halo, {nama}"`
-- **Null Coalescing**: `nama ?? "Anonim"`
-- **Iterasi List**: `untuk n dalam daftar { }`
+. String Template
+. Null Coalescing
+. Iterasi List
