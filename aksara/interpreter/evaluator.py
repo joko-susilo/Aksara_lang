@@ -276,17 +276,28 @@ def eval_ulangi(node, env):
     return result
 
 def eval_untuk(node, env):
-    mulai = int(evaluate(node.mulai, env))
-    akhir = int(evaluate(node.akhir, env))
+    mulai = evaluate(node.mulai, env)
+    akhir = node.akhir
     result = None
-    for i in range(mulai, akhir):
-        env.define(node.var, i)
-        try:
-            result = evaluate(node.blok, env)
-        except BreakException:
-            break
-        except ContinueException:
-            continue
+    if akhir is None:
+        for item in mulai:
+            env.define(node.var,item)
+            try:
+                result = evaluate(node.blok,env)
+            except BreakException:
+                break
+            except ContinueException:
+                continue
+    else:
+         akhir_var = evaluate(akhir,env)
+         for i in range (int(mulai),int(akhir_var)):
+            env.define(node.var, i)
+            try:
+                result = evaluate(node.blok, env)
+            except BreakException:
+                break
+            except ContinueException:
+                continue
     return result
 
 def eval_selama(node, env):

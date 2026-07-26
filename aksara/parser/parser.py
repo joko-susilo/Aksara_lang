@@ -116,14 +116,18 @@ class Parser:
         self.ambil("KATA_KUNCI", "untuk")
         var = self.ambil("NAMA").nilai
         self.ambil("KATA_KUNCI", "dalam")
-        mulai = self.parse_ekspresi()
-        if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "..":
-            self.ambil("OPERATOR", "..")
-            akhir = self.parse_ekspresi()
+        #cek interalist atau rentang
+        if self.lihat().tipe == "NAMA":
+            list_name = self.ambil("NAMA").nilai
+            blok = self.parse_blok()
+            return Untuk(var,NamaVariabel(list_name),None,blok)
         else:
-            raise SyntaxError(f"Baris {self.lihat().baris}: Diharapkan '..' untuk rentang")
-        blok = self.parse_blok()
-        return Untuk(var, mulai, akhir, blok)
+            #rentang angka
+            mulai = self.parse_ekspresi()
+            self.ambil("OPERATOR","..")
+            akhir = self.parse_ekspresi()
+            blok = self.parse_blok()
+            return Untuk(var,mulai,akhir,blok)
 
     def parse_selama(self):
         self.ambil("KATA_KUNCI", "selama")
@@ -326,7 +330,7 @@ class Parser:
                 while self.lihat().tipe == "KOMA":
                     self.ambil("KOMA")
                     elemen.append(self.parse_ekspresi())
-                    self.ambil("KURUNG_SIKU","]")
+                self.ambil("KURUNG_SIKU","]")
                 return Daftar(elemen)
            
         # Ekspresi dalam kurung biasa ( )
