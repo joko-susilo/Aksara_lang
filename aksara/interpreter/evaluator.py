@@ -222,6 +222,9 @@ def eval_biner(node, env):
         return kiri and kanan
     elif op == 'atau':
         return kiri or kanan
+    #Null Coalescing
+    elif op == '??':
+        return kiri if kiri is not None else kanan
 
     else:
         raise SyntaxError(f"Operator '{op}' tidak dikenal")

@@ -183,7 +183,7 @@ class Parser:
     # Ekspresi (dengan prioritas)
     # ----------------------------------------------------------------------
     def parse_ekspresi(self):
-        return self.parse_assignment()
+        return self.parse_null_coalescing()
 
     def parse_assignment(self):
         return self.parse_logika_or()
@@ -194,6 +194,14 @@ class Parser:
             self.ambil("KATA_KUNCI", "atau")
             kanan = self.parse_logika_and()
             kiri = OperasiBiner(kiri, "atau", kanan)
+        return kiri
+        
+    def parse_null_coalescing(self):
+        kiri = self.parse_logika_or()
+        while self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "??":
+            self.ambil("OPERATOR", "??")
+            kanan = self.parse_logika_or()
+            kiri = OperasiBiner(kiri, "??", kanan)
         return kiri
 
     def parse_logika_and(self):

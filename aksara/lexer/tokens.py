@@ -24,7 +24,7 @@ KATA_KUNCI = [
     # Kontrol loop
     "henti", "lanjut",
     # Boolean dan null
-    "benar", "salah", "nol",
+    "benar", "salah", "nil",
     # Modul
     "impor", "sbg",
     "dan","atau","bukan",
