@@ -258,7 +258,34 @@ class Parser:
         # Literal string
         elif t.tipe == "STRING":
             token_string = self.ambil("STRING")
-            return String(token_string.nilai)
+            nilai_string = token_string.nilai[1:-1]  
+        
+            if "{" in nilai_string and "}" in nilai_string:
+                node = None
+                sisa = nilai_string
+            
+                while "{" in sisa and "}" in sisa:
+                    idx_buka = sisa.index("{")
+                    idx_tutup = sisa.index("}")
+                
+                    if idx_buka > 0:
+                        bagian_teks = String('"' + sisa[:idx_buka] + '"')
+                        node = bagian_teks if node is None else OperasiBiner(node, "+", bagian_teks)
+                
+                    nama_var = sisa[idx_buka+1:idx_tutup].strip()
+                    node_var = NamaVariabel(nama_var)
+                    node = node_var if node is None else OperasiBiner(node, "+", node_var)
+                
+                    sisa = sisa[idx_tutup+1:]
+            
+                if sisa:
+                    bagian_akhir = String('"' + sisa + '"')
+                    node = OperasiBiner(node, "+", bagian_akhir)
+            
+                return node
+            else:
+                return String(token_string.nilai)
+
 
         # Boolean dan nil
         elif t.tipe == "KATA_KUNCI":
