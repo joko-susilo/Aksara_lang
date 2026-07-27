@@ -1,4 +1,5 @@
 import importlib
+from aksara.ai.prediksi import tebak
 
 def aksara_cetak(*args):
     """Fungsi cetak bawaan (versi fungsi, bukan statement)."""
@@ -106,4 +107,5 @@ BUILTINS = {
     "bersihkan": aksara_bersihkan,
     "dapatkan": aksara_dapatkan,
     "tukar": aksara_tukar,
+    "tebak": tebak,
 }
