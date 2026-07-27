@@ -7,7 +7,7 @@ TOKEN_SPEC = [
     ("STRING",      r'"[^"]*"'),                    # String: "..." (tidak mendukung escape dulu)
     ("ANGKA",       r"\d+(\.\d+)?"),  
     ("TITIK_DUA",    r":"),
-    ("OPERATOR",    r"==|!=|<=|>=|\.\.|[+\-*/<>=%]"), # Operator: multi-karakter dulu, lalu tunggal
+    ("OPERATOR", r"==|!=|<=|>=|\.\.|\?\?|[+\-*/<>=]"), # Operator: multi-karakter dulu, lalu tunggal
     ("KURUNG_KUWAL", r"[{}]"),  
     ("KURUNG_SIKU", r"[\[\]]"),    
     ("KURUNG",      r"[()]"),
