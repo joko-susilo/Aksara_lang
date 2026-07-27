@@ -1,6 +1,7 @@
 import importlib
 from aksara.ai.prediksi import tebak
-
+from aksara.ai.nlp import ringkas
+from aksara.ai.clustering import kelompok
 def aksara_cetak(*args):
     """Fungsi cetak bawaan (versi fungsi, bukan statement)."""
     print(*args)
@@ -108,4 +109,6 @@ BUILTINS = {
     "dapatkan": aksara_dapatkan,
     "tukar": aksara_tukar,
     "tebak": tebak,
+    "ringkas": ringkas,
+    "kelompok": kelompok,
 }
