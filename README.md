@@ -26,3 +26,21 @@ Fitur
 . String Template
 . Null Coalescing
 . Iterasi List
+. #AI Built-in
+
+Aksara punya fitur AI bawaan tanpa install library!
+
+| Fitur | Fungsi | Contoh |
+|-------|--------|--------|
+| `tebak(data)` | Prediksi angka | `tebak([1,2,3])` → `[4,5]` |
+| `jenis(teks)` | Sentimen teks | `jenis("bagus!")` → `positif` |
+| `ringkas(teks)` | Ringkasan | `ringkas(teks_panjang)` |
+| `kelompok(data, n)` | Clustering | `kelompok([1,2,10,11], 2)` |
+
+### Contoh
+```aksara
+cetak tebak([10, 20, 30])          // [40, 50]
+cetak jenis("keren banget!")       // positif
+cetak ringkas("Kalimat panjang...") // Ringkasan
+cetak kelompok([1,2,10,11], 2)     // [[1,2],[10,11]]
+```
