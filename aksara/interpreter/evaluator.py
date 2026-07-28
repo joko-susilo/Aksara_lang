@@ -166,7 +166,42 @@ def evaluate(node, env):
             hasil[k] = v
         return hasil
         
-        
+    elif isinstance(node, ImporLokal):
+    # Cari file
+        import os
+        paths = [
+        f"stdlib/{node.nama_file}",
+        f"{node.nama_file}",]
+    
+        file_path = None
+        for p in paths:
+            if os.path.exists(p):
+                file_path = p
+                break
+    
+        if file_path is None:
+        raise ImportError(f"Tidak dapat menemukan '{node.nama_file}'")
+    
+    # Baca dan parse file
+        with open(file_path) as f:
+        kode = f.read()
+    
+        from aksara.lexer.tokenizer import tokenize
+        from aksara.parser.parser import Parser
+    
+        tokens = tokenize(kode)
+         ast = Parser(tokens).parse_program()
+    
+    # Evaluasi di environment baru
+    modul_env = Environment(parent=env)
+    for stmt in ast:
+        evaluate(stmt, modul_env)
+    
+    # Simpan modul
+    env.define(node.alias, modul_env)
+    return modul_env
+
+
 
     # --- Blok (list of statements) ---
     elif isinstance(node, list):

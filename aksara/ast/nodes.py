@@ -198,3 +198,10 @@ class Kamus(ASTNode):
         self.pasangan = pasangan
     def __repr__(self):
         return f"Kamus({self.pasangan})"
+        
+class ImporLokal(ASTNode):
+    def __init__(self, nama_file, alias=None):
+        self.nama_file = nama_file
+        self.alias = alias
+    def __repr__(self):
+        return f"ImporLokal({self.nama_file} sebagai {self.alias})"

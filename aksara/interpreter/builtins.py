@@ -19,6 +19,22 @@ from aksara.ai.nlp import ringkas
 from aksara.ai.clustering import kelompok
 from aksara.ai.frekuensi import frekuensi
 from aksara.ai.normalisasi import normalisasi
+from aksara.ai.korelasi import korelasi
+from aksara.ai.cari_mirip import cari_mirip
+from aksara.ai.rekomendasi import rekomendasi
+from aksara.ai.encode import encode
+from aksara.ai.acak_cerdas import acak_cerdas
+from aksara.ai.deteksi_bahasa import deteksi_bahasa
+from aksara.ai.periksa_ejaan import periksa_ejaan
+from aksara.ai.auto_label import auto_label
+from aksara.ai.urutkan_ai import urutkan_ai
+from aksara.ai.cluster_teks import cluster_teks
+from aksara.ai.ubah_gaya import ubah_gaya
+from aksara.ai.ekstrak_entitas import ekstrak_entitas
+from aksara.ai.simulasi_keputusan import simulasi_keputusan
+from aksara.ai.rangking_tfidf import rangking_tfidf
+from aksara.ai.pca import pca
+from aksara.ai.jaring_syaraf import jaring_syaraf
 def aksara_cetak(*args):
     """Fungsi cetak bawaan (versi fungsi, bukan statement)."""
     print(*args)
@@ -130,5 +146,21 @@ BUILTINS = {
     "kelompok": kelompok,
     "frekuensi": frekuensi,
     "normalisasi": normalisasi,
+    "korelasi": korelasi,
+    "cari_mirip": cari_mirip,
+    "rekomendasi": rekomendasi,
+    "encode": encode,
+    "acak_cerdas": acak_cerdas,
+    "deteksi_bahasa": deteksi_bahasa,
+    "periksa_ejaan": periksa_ejaan,
+    "auto_label": auto_label,
+    "urutkan_ai": urutkan_ai,
+    "cluster_teks": cluster_teks,
+    "ubah_gaya": ubah_gaya,
+    "ekstrak_entitas": ekstrak_entitas,
+    "simulasi_keputusan": simulasi_keputusan,
+    "rangking_tfidf": rangking_tfidf,
+    "pca": pca,
+    "jaring_syaraf": jaring_syaraf,
     
 }

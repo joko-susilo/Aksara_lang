@@ -430,4 +430,23 @@ class Parser:
         self.ambil("KATA_KUNCI","galat")
         pesan = self.parse_ekspresi()
         return Galat(pesan)
+        
+    def parse_impor(self):
+        self.ambil("KATA_KUNCI", "impor")
+        nama = self.ambil("STRING").nilai[1:-1]  # hapus kutip
+    
+        # Cek apakah file .ak atau modul Python
+        if nama.endswith(".ak") or "/" in nama or "larik" in nama:
+            alias = nama.replace(".ak", "").replace("/", "_")
+            if self.lihat().tipe == "KATA_KUNCI" and self.lihat().nilai == "sbg":
+                self.ambil("KATA_KUNCI", "sbg")
+                alias = self.ambil("NAMA").nilai
+            return ImporLokal(nama, alias)
+        else:
+        # Impor Python (seperti biasa)
+            alias = nama
+            if self.lihat().tipe == "KATA_KUNCI" and self.lihat().nilai == "sbg":
+                self.ambil("KATA_KUNCI", "sbg")
+                alias = self.ambil("NAMA").nilai
+            return Impor(nama, alias)
 
