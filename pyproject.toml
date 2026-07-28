@@ -16,7 +16,11 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
-dependencies = ["numpy"]
+dependencies = [
+    "numpy; platform_system == 'Windows'",
+    "numpy; platform_system == 'Darwin'",
+    "numpy; platform_system == 'Linux' and platform_machine != 'aarch64'",
+]
 
 [project.scripts]
 aksara = "aksara.cli:main"
