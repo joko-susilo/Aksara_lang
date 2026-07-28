@@ -23,6 +23,3 @@ aksara = "aksara.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["aksara*"]
-
-[tool.setuptools]
-packages = ["aksara", "aksara.lexer", "aksara.parser", "aksara.ast", "aksara.interpreter", "aksara.ai", "aksara.stdlib", "aksara.utils"]
