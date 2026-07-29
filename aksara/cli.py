@@ -20,7 +20,7 @@ from aksara.interpreter.environment import Environment
 
 def main():
     parser = argparse.ArgumentParser(description="Aksara - Bahasa Pemrograman Indonesia")
-    parser.add_argument("file", help="File .ak yang akan dijalankan")
+    parser.add_argument("file", nargs="?", help="File .ak yang akan dijalankan")
     parser.add_argument("-t", "--tokens", action="store_true", help="Tampilkan token")
     parser.add_argument("-a", "--ast", action="store_true", help="Tampilkan AST")
     parser.add_argument("-v", "--version", action="store_true", help="Versi")

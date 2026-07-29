@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aksara-lang"
-version = "0.1.1"
+version = "0.5.0"
 description = "🇮🇩 Bahasa Pemrograman Indonesia Modern dengan AI Built-in"
 readme = "README.md"
 requires-python = ">=3.8"
