@@ -35,6 +35,7 @@ from aksara.ai.simulasi_keputusan import simulasi_keputusan
 from aksara.ai.rangking_tfidf import rangking_tfidf
 from aksara.ai.pca import pca
 from aksara.ai.jaring_syaraf import jaring_syaraf
+from aksara.ai.klasifikasi import jenis
 def aksara_cetak(*args):
     """Fungsi cetak bawaan (versi fungsi, bukan statement)."""
     print(*args)
@@ -162,5 +163,6 @@ BUILTINS = {
     "rangking_tfidf": rangking_tfidf,
     "pca": pca,
     "jaring_syaraf": jaring_syaraf,
+    "jenis":jenis,
     
 }
