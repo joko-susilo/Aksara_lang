@@ -8,9 +8,19 @@
 
 ## 🚀 Instalasi
 
+### Linux / Windows / macOS
 ```bash
-pip install git+https://github.com/joko-susilo/Aksara_lang.git
+pip install aksara-lang
+```
 
+### Termux (Android)
+```bash
+# Install NumPy dulu (wajib untuk fitur AI)
+pkg install python-numpy
+
+# Lalu install Aksara
+pip install aksara-lang
+```
 Syarat: Python 3.8+
 Fitur
 
