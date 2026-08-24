@@ -251,11 +251,20 @@ class Parser:
         return kiri
 
     def parse_multiplication(self):
-        kiri = self.parse_unary()
+        kiri = self.parse_power()
         while self.lihat().tipe == "OPERATOR" and self.lihat().nilai in ("*", "/", "%"):
             op = self.ambil("OPERATOR").nilai
-            kanan = self.parse_unary()
+            kanan = self.parse_power()
             kiri = OperasiBiner(kiri, op, kanan)
+        return kiri
+
+    def parse_power(self):
+        # Pangkat: asosiasi kanan (2 ** 3 ** 2 = 2 ** 9)
+        kiri = self.parse_unary()
+        if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "**":
+            self.ambil("OPERATOR", "**")
+            kanan = self.parse_power()
+            return OperasiBiner(kiri, "**", kanan)
         return kiri
 
     def parse_unary(self):
@@ -345,9 +354,30 @@ class Parser:
                     node = PanggilFungsi(node, args)
                 elif self.lihat().tipe == "KURUNG_SIKU" and self.lihat().nilai == "[":
                     self.ambil("KURUNG_SIKU", "[")
-                    indeks = self.parse_ekspresi()
+                    mulai = None
+                    akhir = None
+                    is_slice = False
+                    if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "..":
+                        # bentuk [..akhir]
+                        self.ambil("OPERATOR", "..")
+                        is_slice = True
+                        if not (self.lihat().tipe == "KURUNG_SIKU" and self.lihat().nilai == "]"):
+                            akhir = self.parse_ekspresi()
+                    elif not (self.lihat().tipe == "KURUNG_SIKU" and self.lihat().nilai == "]"):
+                        mulai = self.parse_ekspresi()
+                        if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "..":
+                            # bentuk [mulai..] atau [mulai..akhir]
+                            self.ambil("OPERATOR", "..")
+                            is_slice = True
+                            if not (self.lihat().tipe == "KURUNG_SIKU" and self.lihat().nilai == "]"):
+                                akhir = self.parse_ekspresi()
                     self.ambil("KURUNG_SIKU", "]")
-                    node = AksesIndeks(node, indeks)
+                    if is_slice:
+                        node = Slice(node, mulai, akhir)
+                    elif mulai is not None:
+                        node = AksesIndeks(node, mulai)
+                    else:
+                        raise SyntaxError(f"Baris {self.lihat().baris}: Indeks kosong []")
                 else:
                     break
             return node

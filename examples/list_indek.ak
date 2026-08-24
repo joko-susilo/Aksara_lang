@@ -3,4 +3,4 @@ cetak angka
 cetak angka[0]
 cetak angka[1]
 cetak angka[2]
-print("Hello, World!")
+cetak("Hello, World!")

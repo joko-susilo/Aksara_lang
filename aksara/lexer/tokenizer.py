@@ -21,7 +21,7 @@ TOKEN_SPEC = [
     ("STRING",      r'"[^"]*"'),                    # String: "..." (tidak mendukung escape dulu)
     ("ANGKA",       r"\d+(\.\d+)?"),  
     ("TITIK_DUA",    r":"),
-    ("OPERATOR", r"==|!=|<=|>=|\.\.|\?\?|[+\-*/<>=]"), # Operator: multi-karakter dulu, lalu tunggal
+    ("OPERATOR", r"==|!=|<=|>=|\*\*|\.\.|\?\?|[+\-*/%<>=]"), # Operator: multi-karakter dulu, lalu tunggal
     ("KURUNG_KUWAL", r"[{}]"),  
     ("KURUNG_SIKU", r"[\[\]]"),    
     ("KURUNG",      r"[()]"),
@@ -45,8 +45,26 @@ def tokenize(kode: str) -> list[Token]:
     tokens = []
     baris = 1
     kolom = 1
+    posisi = 0
+
+    def _posisi_di(offset: int):
+        """Hitung (baris, kolom) untuk offset karakter absolut."""
+        b = kode.count("\n", 0, offset) + 1
+        k = offset - (kode.rfind("\n", 0, offset) + 1) + 1
+        return b, k
+
+    def _cek_karakter_asing(dari: int, sampai: int):
+        """Karakter di luar semua pola token = error, jangan pernah dibuang diam-diam."""
+        if dari < sampai:
+            b, k = _posisi_di(dari)
+            asing = kode[dari:sampai]
+            raise SyntaxError(
+                f"Baris {b}, kolom {k}: Karakter tidak dikenal '{asing[0]}'"
+            )
 
     for m in REGEX.finditer(kode):
+        _cek_karakter_asing(posisi, m.start())
+        posisi = m.end()
         jenis = m.lastgroup
         nilai = m.group()
 
@@ -90,5 +108,6 @@ def tokenize(kode: str) -> list[Token]:
                 kolom += 1
 
     # Token EOF untuk menandai akhir
+    _cek_karakter_asing(posisi, len(kode))
     tokens.append(Token("EOF", "", baris, kolom))
     return tokens

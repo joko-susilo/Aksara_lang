@@ -151,9 +151,10 @@ def evaluate(node, env):
         raise RuntimeError(str(pesan))
             
     elif isinstance(node,Slice):
-        obj = evaluate(node,Objek,env)
-        mulai = evaluate(node,mulai,env) if node.mulai is not None else None
-        akhir = evaluate(node,akhir,env) if node.akhir is not None else None
+        obj = evaluate(node.objek,env)
+        mulai = evaluate(node.mulai,env) if node.mulai is not None else None
+        # Inklusif: a..b mencakup b, jadi geser ujung slice Python +1
+        akhir = evaluate(node.akhir,env) + 1 if node.akhir is not None else None
         try:
             return obj[mulai:akhir]
         except (TypeError,IndexError) as e:
@@ -167,41 +168,36 @@ def evaluate(node, env):
         return hasil
         
     elif isinstance(node, ImporLokal):
-    # Cari file
         import os
         paths = [
-        f"stdlib/{node.nama_file}",
-        f"{node.nama_file}",]
-    
+            f"stdlib/{node.nama_file}",
+            f"{node.nama_file}",
+        ]
+
         file_path = None
         for p in paths:
             if os.path.exists(p):
                 file_path = p
                 break
-    
+
         if file_path is None:
-            raise ImportError(f"Tidak dapat menemukan'{node.nama_file}'")
-        
-    
-    # Baca dan parse file
-            with open(file_path) as f:
-                kode = f.read()
-    
-            from aksara.lexer.tokenizer import tokenize
-            from aksara.parser.parser import Parser
-    
-            tokens = tokenize(kode)
-            ast = Parser(tokens).parse_program()
-            
-    
-    # Evaluasi di environment baru
-            modul_env = Environment(parent=env)
-            for stmt in ast:
-                evaluate(stmt, modul_env)
-    
-    # Simpan modul
-                env.define(node.alias, modul_env)
-            return modul_env
+            raise ImportError(f"Tidak dapat menemukan '{node.nama_file}'")
+
+        from aksara.lexer.tokenizer import tokenize
+        from aksara.parser.parser import Parser
+
+        with open(file_path) as f:
+            kode = f.read()
+
+        tokens = tokenize(kode)
+        ast = Parser(tokens).parse_program()
+
+        modul_env = Environment(parent=env)
+        for stmt in ast:
+            evaluate(stmt, modul_env)
+
+        env.define(node.alias, modul_env)
+        return modul_env
 
 
 
@@ -256,6 +252,9 @@ def eval_biner(node, env):
         if kanan == 0:
             raise ZeroDivisionError("Modulo dengan nol")
         return kiri % kanan
+
+    elif op == '**':
+        return kiri ** kanan
 
     elif op == '==':
         return kiri == kanan
@@ -314,6 +313,12 @@ def eval_panggil_fungsi(node, env):
 
 def eval_akses_atribut(node, env):
     obj = evaluate(node.objek, env)
+    # Akses anggota modul Aksara (hasil impor .ak disimpan sebagai Environment)
+    if isinstance(obj, Environment):
+        try:
+            return obj.get(node.atribut)
+        except NameError:
+            raise AttributeError(f"Modul tidak memiliki '{node.atribut}'")
     try:
         return getattr(obj, node.atribut)
     except AttributeError:
@@ -346,7 +351,7 @@ def eval_untuk(node, env):
                 continue
     else:
          akhir_var = evaluate(akhir,env)
-         for i in range (int(mulai),int(akhir_var)):
+         for i in range (int(mulai),int(akhir_var) + 1):
             env.define(node.var, i)
             try:
                 result = evaluate(node.blok, env)

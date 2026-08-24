@@ -63,7 +63,7 @@ fun variansi(data) {
 }
 
 fun simpangan_baku(data) {
-    // akar dari variansi
+#  akar dari variansi
     balik variansi(data) ** 0.5
 }
 
@@ -91,7 +91,7 @@ fun tebak(data) {
     n = panjang(data)
     jika n < 2 { balik data }
     selisih = 0
-    untuk i dalam 1..n {
+    untuk i dalam 1 .. n - 1 {
         selisih = selisih + (data[i] - data[i-1])
     }
     rata = selisih / (n - 1)
@@ -106,7 +106,7 @@ fun kelompok(data, jumlah) {
     lebar = (max_val - min_val) / jumlah
     
     hasil = []
-    untuk i dalam 0..jumlah {
+    untuk i dalam 0 .. jumlah - 1 {
         hasil[i] = []
     }
     
@@ -120,7 +120,7 @@ fun kelompok(data, jumlah) {
 
 # --- Deteksi ---
 fun outlier(data) {
-    // Deteksi anomali sederhana (di luar 2x simpangan baku)
+#  Deteksi anomali sederhana (di luar 2x simpangan baku)
     rata = rata_rata(data)
     sd = simpangan_baku(data)
     hasil = []
@@ -133,11 +133,11 @@ fun outlier(data) {
 }
 
 fun pola(data) {
-    // Cek apakah deret aritmatika
+#  Cek apakah deret aritmatika
     n = panjang(data)
     jika n < 2 { balik data }
     selisih = data[1] - data[0]
-    untuk i dalam 2..n {
+    untuk i dalam 2 .. n - 1 {
         jika data[i] - data[i-1] != selisih {
             balik "Tidak ada pola"
         }

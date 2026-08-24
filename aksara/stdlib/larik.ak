@@ -71,7 +71,7 @@ fun tebak(data) {
         balik data
     }
     selisih = 0
-    untuk i dalam 1..n {
+    untuk i dalam 1 .. n - 1 {
         selisih = selisih + (data[i] - data[i-1])
     }
     rata = selisih / (n - 1)
@@ -88,7 +88,7 @@ fun kelompok(data, jumlah) {
     lebar = (max_val - min_val) / jumlah
     
     hasil = []
-    untuk i dalam 0..jumlah {
+    untuk i dalam 0 .. jumlah - 1 {
         hasil[i] = []
     }
     
