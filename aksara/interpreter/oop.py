@@ -54,9 +54,9 @@ class _Pabrik:
         self.kelas = kelas
         self.nama = nama
 
-    def __call__(self, *argumen):
+    def __call__(self, *argumen, **kunci):
         obj = ObjekAksara(self.kelas)
-        self.kelas.metode[self.nama](obj, *argumen)
+        self.kelas.metode[self.nama](obj, *argumen, **kunci)
         return obj
 
 
@@ -99,9 +99,9 @@ class _MetodeTerikat:
         self.nama = nama
         self.kelas = kelas
 
-    def __call__(self, *argumen):
+    def __call__(self, *argumen, **kunci):
         sumber = self.kelas if self.kelas is not None else self.obj.kelas
-        return sumber.metode[self.nama](self.obj, *argumen)
+        return sumber.metode[self.nama](self.obj, *argumen, **kunci)
 
     def __repr__(self):
         return f"<metode {self.nama} terikat>"
@@ -116,9 +116,9 @@ class MetodeInterp:
         self.eval = evaluator
         self.kelas_asal = kelas_asal
 
-    def __call__(self, ini, *argumen):
+    def __call__(self, ini, *argumen, **kunci):
         return self.eval.panggil_metode(
-            self.fungsi, ini, argumen, self.closure, self.kelas_asal
+            self.fungsi, ini, argumen, self.closure, self.kelas_asal, kunci
         )
 
 

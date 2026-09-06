@@ -155,7 +155,9 @@ class AksaraCompiler:
         return f"({kiri} {peta[op]} {kanan})"
 
     def _expr_panggil(self, node) -> str:
-        args = ", ".join(self._expr(a) for a in node.argumen)
+        arg = [self._expr(a) for a in node.argumen]
+        arg += [f"{n}={self._expr(v)}" for n, v in node.argumen_kunci]
+        args = ", ".join(arg)
 
         if isinstance(node.fungsi, NamaVariabel):
             nama = node.fungsi.nama
@@ -228,7 +230,7 @@ class AksaraCompiler:
             return self._stmt_jika(node, pad)
 
         if isinstance(node, DefinisiFungsi):
-            param = ", ".join(node.parameter)
+            param = self._param_kode(node.parameter, node.parameter_default)
             return [f"{pad}def {node.nama}({param}):"] + self._blok(node.blok)
 
         if isinstance(node, Coba):
@@ -242,7 +244,11 @@ class AksaraCompiler:
             try:
                 for m in node.metode:
                     nama_py = f"_{node.nama}_{m.nama}"
-                    param = ", ".join(["ini"] + m.parameter)
+                    param = self._param_kode(m.parameter, m.parameter_default)
+                    if param:
+                        param = "ini, " + param
+                    else:
+                        param = "ini"
                     baris.append(f"{pad}def {nama_py}({param}):")
                     baris += self._blok(m.blok)
                     baris.append("")
@@ -280,6 +286,17 @@ class AksaraCompiler:
         raise NotImplementedError(
             f"Target assignment '{type(node).__name__}' belum didukung"
         )
+
+    def _param_kode(self, parameter, parameter_default) -> str:
+        """Parameter jadi teks Python termasuk nilai default."""
+        default = parameter_default or [None] * len(parameter)
+        hasil = []
+        for nama, d in zip(parameter, default):
+            if d is not None:
+                hasil.append(f"{nama}={self._expr(d)}")
+            else:
+                hasil.append(nama)
+        return ", ".join(hasil)
 
     def _header_untuk(self, node, pad) -> str:
         if node.akhir is None:

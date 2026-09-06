@@ -227,6 +227,18 @@ cetak tambah(3, 4)   # 7
 - Kembalian: `balik ekspresi`
 - Tanpa `balik`, fungsi mengembalikan `nil`.
 - Fungsi memakai *closure*: bisa membaca variabel dari lingkup pembuatnya.
+- Parameter bisa punya nilai default; pemanggilan bisa memakai kata kunci:
+
+```aksara
+fun sapa(nama, sapaan = "Halo") {
+    balik sapaan + ", " + nama
+}
+
+cetak sapa("Budi")            # Halo, Budi
+cetak sapa("Budi", "Yo")      # Yo, Budi
+cetak sapa("Budi", sapaan = "Assalamu")   # Assalamu, Budi
+# Builtin juga: jaring_syaraf(X, y, hidden = 8, iterasi = 500)
+```
 
 ### Kelas & Objek (OOP)
 
@@ -359,6 +371,9 @@ Modul-modul dalam folder `stdlib/` (dipakai lewat `impor "modul.ak" sbg x`):
 | `waktu.ak` | Waktu: `detik_sekarang`, `waktu_teks`, `waktu_teks_kustom`, `tahun`, `bulan`, `hari`, `jam`, `menit`, `detik`, `tidur` |
 | `ml.ak` | Machine Learning: `latih(X, y)`, `ramal(model, X)` (jaringan saraf numpy bawaan) |
 | `data.ak` | Data & metrik AI: `bagi`, `akurasi`, `galat_rata`, `ambil_selisih` |
+| `json.ak` | JSON: `urai(teks)`, `ubah(data)`, `ubah_indah(data)` |
+| `csv.ak` | CSV: `baca(jalan)`, `tulis(jalan, baris)`, `baca_kamus(jalan)` |
+| `web.ak` | HTTP: `dapat`, `dapat_teks`, `dapat_json`, `kirim`, `status`, `header` *(butuh `requests`)* |
 | `larik.ak` | Statistik array: `rata_rata`, `jumlah`, `maksimum` (`terbesar`), `minimum`, `rentang`, `median`, `variansi`, `simpangan_baku`, `normalisasi`, `skala`, `tebak`, `kelompok`, `outlier`, `pola`, `frekuensi` |
 
 Contoh:

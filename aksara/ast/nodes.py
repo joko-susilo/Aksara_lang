@@ -82,11 +82,13 @@ class OperasiUnary(ASTNode):
         return f"OperasiUnary({self.op}, {self.ekspresi})"
 
 class PanggilFungsi(ASTNode):
-    def __init__(self, fungsi, argumen: list):
+    def __init__(self, fungsi, argumen: list, argumen_kunci=None):
         self.fungsi = fungsi   # AST node yang menghasilkan callable (bisa NamaVariabel atau AksesAtribut)
         self.argumen = argumen
+        # argumen_kunci = list [(nama, node nilat)] untuk pemanggilan kwarg.
+        self.argumen_kunci = argumen_kunci or []
     def __repr__(self):
-        return f"PanggilFungsi({self.fungsi}, {self.argumen})"
+        return f"PanggilFungsi({self.fungsi}, {self.argumen}, kw={self.argumen_kunci})"
 
 class AksesAtribut(ASTNode):
     def __init__(self, objek, atribut: str):
@@ -135,10 +137,12 @@ class Jika(ASTNode):
         return f"Jika({self.kondisi}, {self.blok_jika}, cabang={self.cabang_lain})"
 
 class DefinisiFungsi(ASTNode):
-    def __init__(self, nama: str, parameter: list, blok: list):
+    def __init__(self, nama: str, parameter: list, blok: list, parameter_default=None):
         self.nama = nama
         self.parameter = parameter
         self.blok = blok
+        # parameter_default[i] = node nilai default utk parameter[i], atau None.
+        self.parameter_default = parameter_default or [None] * len(parameter)
     def __repr__(self):
         return f"DefinisiFungsi({self.nama}({self.parameter}), {self.blok})"
 

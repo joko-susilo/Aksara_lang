@@ -116,7 +116,7 @@ def evaluate(node, env):
     elif isinstance(node, Jika):
         return eval_jika(node, env)
     elif isinstance(node, DefinisiFungsi):
-        fungsi = Fungsi(node.nama, node.parameter, node.blok, env)
+        fungsi = Fungsi(node.nama, node.parameter, node.blok, env, node.parameter_default)
         env.define(node.nama, fungsi)
         return fungsi
     elif isinstance(node, AksesIndeks):
@@ -336,17 +336,19 @@ def eval_panggil_fungsi(node, env):
             fungsi_obj = BUILTINS.get(nama_fungsi)
         if fungsi_obj is None:
             raise NameError(f"Fungsi '{nama_fungsi}' tidak ditemukan")
-    else:      
-        fungsi_obj = evaluate(node.fungsi, env)
-        
-    arg_values = [evaluate(arg, env) for arg in node.argumen]
-    
-    if callable(fungsi_obj):
-        return fungsi_obj(*arg_values)
-    elif isinstance(fungsi_obj, Fungsi):
-        return panggil_fungsi_aksara(fungsi_obj, arg_values)
     else:
-        raise TypeError(f"'{node.fungsi}' bukan fungsi")
+        fungsi_obj = evaluate(node.fungsi, env)
+
+    arg_values = [evaluate(arg, env) for arg in node.argumen]
+    arg_kunci = {nama: evaluate(val, env) for nama, val in node.argumen_kunci}
+
+    if isinstance(fungsi_obj, Fungsi):
+        return panggil_fungsi_aksara(fungsi_obj, arg_values, arg_kunci)
+    if callable(fungsi_obj):
+        if arg_kunci:
+            return fungsi_obj(*arg_values, **arg_kunci)
+        return fungsi_obj(*arg_values)
+    raise TypeError(f"'{node.fungsi}' bukan fungsi")
 
 def eval_akses_atribut(node, env):
     obj = evaluate(node.objek, env)
@@ -423,17 +425,18 @@ def eval_jika(node, env):
 
 # --- Definisi Fungsi Kustom ---
 class Fungsi:
-    def __init__(self, nama, parameter, blok, closure):
+    def __init__(self, nama, parameter, blok, closure, parameter_default=None):
         self.nama = nama
         self.parameter = parameter
         self.blok = blok
         self.closure = closure  # environment tempat fungsi didefinisikan (closure)
+        self.parameter_default = parameter_default or [None] * len(parameter)
 
     def __call__(self, *argumen):
         """Agar Fungsi bisa dipanggil langsung dari Python luar (interop)."""
         return panggil_fungsi_aksara(self, list(argumen))
 
-def panggil_metode(fungsi, ini_obj, arg_values, closure, kelas_asal=None):
+def panggil_metode(fungsi, ini_obj, arg_values, closure, kelas_asal=None, arg_kunci=None):
     """Menjalankan metode Aksara: `ini` diikat ke objek pemanggil.
 
     `kelas_asal` adalah kelas tempat metode didefinisikan; `induk` (super)
@@ -449,7 +452,11 @@ def panggil_metode(fungsi, ini_obj, arg_values, closure, kelas_asal=None):
         kelas_obj = getattr(ini_obj, "kelas", None)
         kelas_super = kelas_obj.induk if kelas_obj else None
     env_fungsi.define("induk", _PranalaInduk(ini_obj, kelas_super))
-    for param, arg in zip(fungsi.parameter, arg_values):
+    nilai = urai_argumen(
+        fungsi.nama, fungsi.parameter, fungsi.parameter_default,
+        arg_values, arg_kunci or {}, closure,
+    )
+    for param, arg in zip(fungsi.parameter, nilai):
         env_fungsi.define(param, arg)
     try:
         return evaluate(fungsi.blok, env_fungsi)
@@ -457,13 +464,39 @@ def panggil_metode(fungsi, ini_obj, arg_values, closure, kelas_asal=None):
         return ret.value
 
 
-def panggil_fungsi_aksara(fungsi, arg_values):
+def urai_argumen(nama_fungsi, parameter, parameter_default, pos, kunci, env_default):
+    """Menyatukan argumen posisional + keyword + nilai default ke urutan parameter."""
+    if len(pos) > len(parameter):
+        raise TypeError(
+            f"Fungsi '{nama_fungsi}' menerima {len(parameter)} argumen, tetapi "
+            f"diberikan {len(pos)} posisional"
+        )
+    peta = {}
+    for i, nilai in enumerate(pos):
+        peta[parameter[i]] = nilai
+    for nama, nilai in kunci.items():
+        if nama not in parameter:
+            raise TypeError(f"Fungsi '{nama_fungsi}' tidak mengenal argumen '{nama}'")
+        if nama in peta:
+            raise TypeError(f"Fungsi '{nama_fungsi}': argumen '{nama}' diisi dua kali")
+        peta[nama] = nilai
+    for i, nama in enumerate(parameter):
+        if nama not in peta:
+            default = (parameter_default or [None] * len(parameter))[i]
+            if default is None:
+                raise TypeError(f"Fungsi '{nama_fungsi}' butuh argumen '{nama}'")
+            peta[nama] = evaluate(default, env_default)
+    return [peta[nama] for nama in parameter]
+
+
+def panggil_fungsi_aksara(fungsi, arg_values, arg_kunci=None):
     """Mengeksekusi fungsi yang didefinisikan dalam Aksara."""
-    if len(arg_values) != len(fungsi.parameter):
-        raise TypeError(f"Fungsi '{fungsi.nama}' membutuhkan {len(fungsi.parameter)} argumen, tetapi diberikan {len(arg_values)}")
-    
+    nilai = urai_argumen(
+        fungsi.nama, fungsi.parameter, fungsi.parameter_default,
+        arg_values, arg_kunci or {}, fungsi.closure,
+    )
     env_fungsi = Environment(parent=fungsi.closure)
-    for param, arg in zip(fungsi.parameter, arg_values):
+    for param, arg in zip(fungsi.parameter, nilai):
         env_fungsi.define(param, arg)
     try:
         return evaluate(fungsi.blok, env_fungsi)

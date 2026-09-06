@@ -4,6 +4,18 @@ Semua perubahan penting proyek Aksara dicatat di sini.
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/);
 versi mengikuti [Semantic Versioning](https://semver.org/).
 
+## [0.10.0] - 2026-09-06
+
+### Ditambahkan
+- Pemanggilan fungsi dengan **kata kunci (kwargs)** dan **nilai default
+  parameter**: `fun f(a, b = 2)` + `f(1, b = 9)`; berlaku untuk fungsi,
+  metode, konstruktor, dan builtin (mis. `jaring_syaraf(..., iterasi=500)`).
+- Stdlib praktis: `json.ak` (urai/ubah), `csv.ak` (baca/tulis/kamus),
+  `web.ak` (HTTP via `requests`).
+- String yang memuat `{`/`}` non-template (mis. JSON) tidak lagi salah
+  diurai sebagai template.
+- Contoh & tes baru (total 100 tes).
+
 ## [0.9.0] - 2026-09-06
 
 ### Ditambahkan — Visi AI-first

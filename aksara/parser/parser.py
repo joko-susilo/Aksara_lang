@@ -14,6 +14,11 @@
 
 from aksara.ast.nodes import *
 from aksara.lexer.tokens import Token
+import re
+
+# Template string: teks boleh apa saja, tiap kurung berisi nama variabel.
+_POLA_TEMPLAT = re.compile(r'[^{}]*(\{[A-Za-z_][A-Za-z0-9_]*\}[^{}]*)*')
+_POLA_IDENT = re.compile(r'[A-Za-z_][A-Za-z0-9_]*')
 
 class Parser:
     def __init__(self, tokens: list):
@@ -22,6 +27,13 @@ class Parser:
 
     def lihat(self) -> Token:
         return self.tokens[self.pos]
+
+    def pandang(self, n: int = 1) -> Token:
+        """Token ke-n di depan (lookahead)."""
+        i = self.pos + n
+        if i < len(self.tokens):
+            return self.tokens[i]
+        return self.tokens[-1]
 
     def ambil(self, tipe=None, nilai=None) -> Token:
         t = self.lihat()
@@ -157,14 +169,27 @@ class Parser:
         nama = self.ambil("NAMA").nilai
         self.ambil("KURUNG", "(")
         parameter = []
+        parameter_default = []
         if self.lihat().tipe == "NAMA":
-            parameter.append(self.ambil("NAMA").nilai)
+            nama_p = self.ambil("NAMA").nilai
+            default = None
+            if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "=":
+                self.ambil("OPERATOR", "=")
+                default = self.parse_ekspresi()
+            parameter.append(nama_p)
+            parameter_default.append(default)
         while self.lihat().tipe == "KOMA":
-            self.ambil("KOMA")                          
-            parameter.append(self.ambil("NAMA").nilai)   
+            self.ambil("KOMA")
+            nama_p = self.ambil("NAMA").nilai
+            default = None
+            if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "=":
+                self.ambil("OPERATOR", "=")
+                default = self.parse_ekspresi()
+            parameter.append(nama_p)
+            parameter_default.append(default)
         self.ambil("KURUNG", ")")
         blok = self.parse_blok()
-        return DefinisiFungsi(nama, parameter, blok)
+        return DefinisiFungsi(nama, parameter, blok, parameter_default)
 
     def parse_cetak(self):
         self.ambil("KATA_KUNCI", "cetak")
@@ -302,13 +327,23 @@ class Parser:
             elif self.lihat().tipe == "KURUNG" and self.lihat().nilai == "(":
                 self.ambil("KURUNG", "(")
                 args = []
+                arg_kunci = []
                 if self.lihat().tipe != "KURUNG" or self.lihat().nilai != ")":
-                    args.append(self.parse_ekspresi())
-                    while self.lihat().tipe == "KOMA":
-                        self.ambil("KOMA")
-                        args.append(self.parse_ekspresi())
+                    while True:
+                        if (self.lihat().tipe == "NAMA"
+                                and self.pandang(1).tipe == "OPERATOR"
+                                and self.pandang(1).nilai == "="):
+                            nama_kw = self.ambil("NAMA").nilai
+                            self.ambil("OPERATOR", "=")
+                            arg_kunci.append((nama_kw, self.parse_ekspresi()))
+                        else:
+                            args.append(self.parse_ekspresi())
+                        if self.lihat().tipe == "KOMA":
+                            self.ambil("KOMA")
+                            continue
+                        break
                 self.ambil("KURUNG", ")")
-                node = PanggilFungsi(node, args)
+                node = PanggilFungsi(node, args, arg_kunci)
             elif self.lihat().tipe == "KURUNG_SIKU" and self.lihat().nilai == "[":
                 self.ambil("KURUNG_SIKU", "[")
                 mulai = None
@@ -352,7 +387,7 @@ class Parser:
             token_string = self.ambil("STRING")
             nilai_string = token_string.nilai[1:-1]  
         
-            if "{" in nilai_string and "}" in nilai_string:
+            if "{" in nilai_string and "}" in nilai_string and _POLA_TEMPLAT.fullmatch(nilai_string):
                 node = None
                 sisa = nilai_string
             
@@ -365,6 +400,8 @@ class Parser:
                         node = bagian_teks if node is None else OperasiBiner(node, "+", bagian_teks)
                 
                     nama_var = sisa[idx_buka+1:idx_tutup].strip()
+                    if not _POLA_IDENT.fullmatch(nama_var):
+                        return String(token_string.nilai)
                     node_var = NamaVariabel(nama_var)
                     node = node_var if node is None else OperasiBiner(node, "+", node_var)
                 
