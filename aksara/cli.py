@@ -15,6 +15,7 @@
 import argparse
 from aksara.lexer.tokenizer import tokenize
 from aksara.parser.parser import Parser
+from aksara.compiler.python import AksaraCompiler
 from aksara.interpreter.evaluator import evaluate
 from aksara.interpreter.environment import Environment
 
@@ -23,6 +24,8 @@ def main():
     parser.add_argument("file", nargs="?", help="File .ak yang akan dijalankan")
     parser.add_argument("-t", "--tokens", action="store_true", help="Tampilkan token")
     parser.add_argument("-a", "--ast", action="store_true", help="Tampilkan AST")
+    parser.add_argument("-c", "--compile", action="store_true",
+                        help="Kompilasi ke Python (tanpa menjalankan)")
     parser.add_argument("-v", "--version", action="store_true", help="Versi")
     args = parser.parse_args()
 
@@ -45,6 +48,10 @@ def main():
     if args.ast:
         for node in ast:
             print(node)
+        return
+
+    if args.compile:
+        print(AksaraCompiler().compile_program(ast))
         return
 
     env = Environment()

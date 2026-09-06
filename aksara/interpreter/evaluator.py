@@ -79,10 +79,8 @@ def evaluate(node, env):
     elif isinstance(node, AksesIndeks):
         obj = evaluate(node.objek, env)
         indeks = evaluate(node.indeks, env)
-        try:
-            return obj[indeks]
-        except (IndexError, TypeError, KeyError) as e:
-            raise RuntimeError(f"Tidak dapat mengakses indeks {indeks} pada {obj}: {e}")
+        # Teruskan tipe error asli (IndexError/KeyError/dst) supaya kecuali [Tipe] bekerja.
+        return obj[indeks]
 
     elif isinstance(node, Daftar):
         return [evaluate(el, env) for el in node.elemen]
@@ -117,6 +115,9 @@ def evaluate(node, env):
     elif isinstance(node, Coba):
         try:
             return evaluate(node.blok_coba, env)
+        except (ReturnException, BreakException, ContinueException):
+            # balik/henti/lanjut bukan error: lewati handling kecuali.
+            raise
         except Exception as e:
             for cabang in node.kecuali_list:
                 # Jika cabang punya tipe error spesifik
@@ -204,15 +205,17 @@ def evaluate(node, env):
     # --- Blok (list of statements) ---
     elif isinstance(node, list):
         result = None
-        for stmt in node:
-            try:
+        try:
+            for stmt in node:
                 result = evaluate(stmt, env)
-            except ReturnException as e:
-                raise e
-            except BreakException:
-                break
-            except ContinueException:
-                continue
+        except ReturnException:
+            raise
+        except BreakException:
+            # Henti di dalam blok: hentikan sisa statement blok ini,
+            # lalu teruskan ke konstruksi perulangan terdekat.
+            raise
+        except ContinueException:
+            raise
         return result
     else:
         raise NotImplementedError(f"Evaluasi belum diimplementasi untuk {type(node)}")
@@ -294,11 +297,13 @@ def eval_panggil_fungsi(node, env):
     # Dapatkan objek fungsi
     if isinstance(node.fungsi, NamaVariabel):
         nama_fungsi = node.fungsi.nama
-        # Builtins
-        if nama_fungsi in BUILTINS:
-            fungsi_obj = BUILTINS[nama_fungsi]
-        else:
+        # Fungsi buatan user (di env) lebih dulu; builtin jadi cadangan.
+        try:
             fungsi_obj = env.get(nama_fungsi)
+        except NameError:
+            fungsi_obj = BUILTINS.get(nama_fungsi)
+        if fungsi_obj is None:
+            raise NameError(f"Fungsi '{nama_fungsi}' tidak ditemukan")
     else:      
         fungsi_obj = evaluate(node.fungsi, env)
         
@@ -391,6 +396,10 @@ class Fungsi:
         self.parameter = parameter
         self.blok = blok
         self.closure = closure  # environment tempat fungsi didefinisikan (closure)
+
+    def __call__(self, *argumen):
+        """Agar Fungsi bisa dipanggil langsung dari Python luar (interop)."""
+        return panggil_fungsi_aksara(self, list(argumen))
 
 def panggil_fungsi_aksara(fungsi, arg_values):
     """Mengeksekusi fungsi yang didefinisikan dalam Aksara."""

@@ -39,9 +39,8 @@ def test_komentar_diabaikan():
     assert "# ini komentar" not in nilai_token
     assert '"halo"' in nilai_token
 
-def test_kata_kunci_pendek():
-    kode = "fn sapa() { balik 'halo' }"  # string nanti pakai ", tapi ini tes konsep
+def test_kata_kunci_fungsi():
     tokens = tokenize('fun sapa() { balik "halo" }')
     kata_kunci = [t.nilai for t in tokens if t.tipe == "KATA_KUNCI"]
-    assert "fn" in kata_kunci
+    assert "fun" in kata_kunci
     assert "balik" in kata_kunci
