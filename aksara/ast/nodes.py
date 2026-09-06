@@ -13,7 +13,8 @@
 # limitations under the License.
 
 
-from aksara.ast.nodes import *
+import ast
+
 class ASTNode:
     """Kelas dasar untuk semua node AST."""
     pass
@@ -27,7 +28,8 @@ class Angka(ASTNode):
 
 class String(ASTNode):
     def __init__(self, nilai: str):
-        self.nilai = nilai[1:-1]  # hapus kutip
+        # Hapus kutip dan decode escape (\\n, \\t, \\uXXXX, dst).
+        self.nilai = ast.literal_eval(nilai)
     def __repr__(self):
         return f'String("{self.nilai}")'
 

@@ -173,14 +173,6 @@ class Parser:
         ekspresi = self.parse_ekspresi()
         return Balik(ekspresi)
 
-    def parse_impor(self):
-        self.ambil("KATA_KUNCI", "impor")
-        modul_token = self.ambil("STRING")
-        nama_modul = modul_token.nilai[1:-1]
-        self.ambil("KATA_KUNCI", "sbg")
-        alias = self.ambil("NAMA").nilai
-        return Impor(nama_modul, alias)
-
     def parse_ekspresi_stmt(self):
         ekspr = self.parse_ekspresi()
         if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "=":

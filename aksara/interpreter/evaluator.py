@@ -106,10 +106,10 @@ def evaluate(node, env):
             indeks =evaluate(target.indeks,env)
             obj[indeks]=nilai
         elif isinstance (target,AksesAtribut):
-            obj = evalutate(target.objek,env)
-            setattr(obj,atribut,nilai)
+            obj = evaluate(target.objek,env)
+            setattr(obj,target.atribut,nilai)
         else:
-            raise RuntimeError(f"target assigment tidak di dukung:{type(target)}")
+            raise RuntimeError(f"Target assignment tidak didukung: {type(target).__name__}")
         return nilai
         
     elif isinstance(node, Coba):
