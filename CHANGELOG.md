@@ -4,6 +4,15 @@ Semua perubahan penting proyek Aksara dicatat di sini.
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/);
 versi mengikuti [Semantic Versioning](https://semver.org/).
 
+## [0.6.2] - 2026-09-06
+
+### Ditambahkan
+- Perintah REPL: `:help`, `:vars`, `:reset`, `:load <file.ak>`,
+  `:history`, `:q`/`:quit`.
+- Riwayat panah atas/bawah via readline bila tersedia.
+- Perintah REPL ikut tercatat di `:history`.
+- `tests/test_repl.py` bertambah (total 63 tes).
+
 ## [0.6.1] - 2026-09-06
 
 ### Ditambahkan

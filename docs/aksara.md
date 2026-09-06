@@ -326,7 +326,19 @@ besar
 - Environment persisten: variabel & fungsi bertahan antar baris.
 - Blok `{ }` yang belum seimbang memunculkan prompt lanjutan `...`.
 - Fungsi panjang bisa ditulis dalam mode blok: baris awal `:`, akhiri `:EOF`.
-- Keluar dengan `keluar`, `quit`, `exit`, atau Ctrl-D.
+- Keluar dengan `keluar`, `quit`, `exit`, `:q`, atau Ctrl-D.
+- Jika didukung sistem, riwayat panah atas/bawah (readline) tersedia.
+
+#### Perintah REPL
+
+| Perintah | Fungsi |
+|----------|--------|
+| `:help` | tampilkan bantuan |
+| `:vars` | tampilkan variabel & fungsi yang terdefinisi |
+| `:reset` | hapus semua variabel & fungsi |
+| `:load <file.ak>` | muat & jalankan file Aksara |
+| `:history` | tampilkan riwayat perintah |
+| `:q` / `:quit` | keluar dari REPL |
 
 ## Arsitektur
 

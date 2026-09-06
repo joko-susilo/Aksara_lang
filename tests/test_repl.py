@@ -71,3 +71,46 @@ def test_error_tidak_mematikan_repl():
     )
     assert "ZeroDivisionError" in out
     assert "masih hidup\n" in out
+
+
+def test_perintah_help():
+    out = jalankan_repl(":help\nkeluar\n")
+    assert ":load <file.ak>" in out
+    assert ":reset" in out
+
+
+def test_perintah_vars():
+    out = jalankan_repl("x = 5\nnama = \"Eka\"\n:vars\nkeluar\n")
+    assert "x: int = 5" in out
+    assert "nama: str =" in out
+
+
+def test_perintah_reset():
+    out = jalankan_repl("x = 5\n:reset\n:vars\nkeluar\n")
+    assert "Environment di-reset." in out
+    assert "(kosong" in out
+
+
+def test_perintah_history():
+    out = jalankan_repl("1 + 1\n:history\nkeluar\n")
+    assert "1 + 1" in out
+    assert ":history" in out
+
+
+def test_perintah_tidak_dikenal():
+    out = jalankan_repl(":nuknown\nkeluar\n")
+    assert "Perintah tidak dikenal: :nuknown" in out
+
+
+def test_perintah_quit():
+    out = jalankan_repl("1 + 1\n:q\n2 + 2\n")
+    assert "2\n" in out
+    assert "4\n" not in out  # perintah setelah ':q' tidak dieksekusi
+
+
+def test_load_file(tmp_path):
+    jalan = tmp_path / "mod.ak"
+    jalan.write_text('x = 100\ncetak "dimuat {x}"\n', encoding="utf-8")
+    out = jalankan_repl(f":load {jalan}\n:vars\nkeluar\n")
+    assert "dimuat 100" in out
+    assert "x: int = 100" in out

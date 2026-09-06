@@ -15,6 +15,7 @@
 """REPL (Read-Eval-Print Loop) interaktif untuk Aksara."""
 
 import contextlib
+import os
 import re
 import sys
 
@@ -37,6 +38,29 @@ PROMPT_HEREDOC = ":   "
 
 _POLOSKAN_STRING = re.compile(r'"(?:[^"\\]|\\.)*"')
 
+# Izinkan readline kalau tersedia (Linux / Termux).
+try:
+    import readline as _readline  # noqa: F401
+    _READLINE_AVAILABLE = True
+except ImportError:
+    _READLINE_AVAILABLE = False
+
+_TULIS_BANTUAN = """\
+Perintah REPL:
+  :help              tampilkan bantuan ini
+  :vars              tampilkan variabel & fungsi yang terdefinisi
+  :reset             hapus semua variabel & fungsi
+  :load <file.ak>    muat & jalankan file Aksara
+  :history           tampilkan riwayat perintah
+  :q / :quit         keluar dari REPL
+
+Penulisan kode:
+  - Blok pakai kurung kurawal { } (bukan indentasi).
+  - Ekspresi murni dicetak otomatis (mis. '1 + 1' → 2).
+  - Baris ':' diakhiri ':EOF' untuk blok panjang.
+  - 'keluar' atau Ctrl-D untuk keluar.
+"""
+
 
 class Repl:
     """Loop baca-evaluasi-cetak dengan environment yang persisten."""
@@ -45,6 +69,7 @@ class Repl:
         self.stdin = stdin
         self.stdout = stdout
         self.env = Environment()
+        self.riwayat: list[str] = []
 
     # ------------------------------------------------------------------
     # Input (dengan deteksi blok belum tertutup)
@@ -90,6 +115,8 @@ class Repl:
             self.stdout.write(inp)
             self.stdout.flush()
             inp = inp.rstrip("\n")
+        if inp is not None:
+            self.riwayat.append(inp)
         return inp
 
     @staticmethod
@@ -107,7 +134,84 @@ class Repl:
         return self.stdin.isatty()
 
     # ------------------------------------------------------------------
-    # Eksekusi
+    # Perintah internal REPL (awalan ':')
+    # ------------------------------------------------------------------
+    def _proses_perintah(self, kode: str) -> bool | None:
+        """Proses perintah ':...'. Kembalikan True jika merupakan perintah."""
+        baris = kode.strip()
+        if not baris.startswith(":"):
+            return False
+
+        bagian = baris.split(None, 1)
+        perintah = bagian[0].lower()
+        arg = bagian[1] if len(bagian) > 1 else ""
+
+        if perintah in (":q", ":quit"):
+            return None  # tanda keluar
+
+        if perintah == ":help":
+            self.stdout.write(_TULIS_BANTUAN)
+            return True
+
+        if perintah == ":vars":
+            self._tampilkan_vars()
+            return True
+
+        if perintah == ":reset":
+            self.env = Environment()
+            self.stdout.write("Environment di-reset.\n")
+            return True
+
+        if perintah == ":load":
+            return self._muat_file(arg)
+
+        if perintah == ":history":
+            self._tampilkan_riwayat()
+            return True
+
+        self.stdout.write(f"Perintah tidak dikenal: {perintah}\n")
+        self.stdout.write("Ketik ':help' untuk daftar perintah.\n")
+        return True
+
+    def _tampilkan_vars(self):
+        vars_env = self.env.vars
+        if not vars_env:
+            self.stdout.write("(kosong — belum ada variabel/fungsi)\n")
+            return
+        for nama in sorted(vars_env.keys()):
+            val = vars_env[nama]
+            tipe = type(val).__name__
+            self.stdout.write(f"  {nama}: {tipe} = {val!r}\n")
+
+    def _tampilkan_riwayat(self):
+        if not self.riwayat:
+            self.stdout.write("(riwayat kosong)\n")
+            return
+        panjang = len(self.riwayat)
+        for i, baris in enumerate(self.riwayat, 1):
+            self.stdout.write(f"  {i:4d}  {baris}\n")
+
+    def _muat_file(self, jalur: str) -> bool | None:
+        jalur = jalur.strip()
+        if not jalur:
+            self.stdout.write("Penggunaan: :load <file.ak>\n")
+            return True
+        jalur = os.path.expanduser(jalur)
+        if not os.path.isfile(jalur):
+            self.stdout.write(f"File tidak ditemukan: {jalur}\n")
+            return True
+        try:
+            with open(jalur, "r", encoding="utf-8") as f:
+                kode = f.read()
+            err, _ = self._jalankan(kode)
+            if err:
+                self.stdout.write(f"Galat di {jalur}:\n  {err}\n")
+        except Exception as e:
+            self.stdout.write(f"Gagal membaca {jalur}: {e}\n")
+        return True
+
+    # ------------------------------------------------------------------
+    # Eksekusi kode Aksara
     # ------------------------------------------------------------------
     def _jalankan(self, kode: str):
         """Parsing + evaluasi; mencetak nilai ekspresi terakhir bila murni."""
@@ -146,18 +250,22 @@ class Repl:
     # ------------------------------------------------------------------
     def jalan(self) -> int:
         banner = (
-            "Aksara v{ver} — ketik kode Aksara. Baris berawalan ':' membuka "
-            "mode blok panjang (akhiri ':EOF').\n"
+            "Aksara v{ver} — ketik kode Aksara. ':help' untuk bantuan.\n"
             "'keluar' atau Ctrl-D untuk keluar.\n"
         )
-        self.stdout.write(banner.format(
-            ver=self._versi()
-        ))
+        self.stdout.write(banner.format(ver=self._versi()))
         while True:
             kode = self._baca_multi_line()
             if kode is None or kode.strip() in ("keluar", "quit", "exit"):
                 break
             if kode.strip() == "":
+                continue
+
+            # Perintah internal REPL (:help, :vars, dll.)
+            hasil = self._proses_perintah(kode)
+            if hasil is None:
+                break  # :q / :quit
+            if hasil:
                 continue
 
             err, _ = self._jalankan(kode)
