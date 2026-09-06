@@ -47,6 +47,16 @@ def test_kompilasi_untuk_daftar():
     assert "for x in daftar:" in py
 
 
+def test_kompilasi_untuk_daftar_literal():
+    py = kompilasi("untuk x dalam [1, 2, 3] { cetak x }")
+    assert "for x in [1, 2, 3]:" in py
+
+
+def test_kompilasi_untuk_rentang_variabel():
+    py = kompilasi("untuk i dalam mulai..akhir { cetak i }")
+    assert "for i in range(int(mulai), int(akhir) + 1):" in py
+
+
 def test_kompilasi_selama():
     py = kompilasi("selama x < 3 { x = x + 1 }")
     assert "while (x < 3):" in py
@@ -211,4 +221,20 @@ def test_setara_impor_builtin_kamus():
         'k = ["satu": 1, "dua": 2]\n'
         'cetak kunci(k)\n'
         'cetak ada(k, "satu")'
+    )
+
+
+def test_setara_untuk_daftar_literal():
+    cek_setara(
+        'untuk x dalam [10, 20, 30] {\n'
+        '  cetak x\n'
+        '}'
+    )
+
+
+def test_setara_untuk_rentang_variabel():
+    cek_setara(
+        'mulai = 3\n'
+        'akhir = 5\n'
+        'untuk i dalam mulai..akhir { cetak i }'
     )

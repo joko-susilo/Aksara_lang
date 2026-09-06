@@ -1,76 +1,356 @@
+# Dokumentasi Bahasa Pemrograman Aksara
 
+Aksara adalah bahasa pemrograman berbasis bahasa Indonesia yang berjalan di atas
+Python. Kode sumber Aksara diurai menjadi AST lalu dijalankan oleh *interpreter*
+(tree-walker), atau dikompilasi menjadi Python murni (*transpiler*).
 
-Dokumentasi Bahasa Pemrograman Aksara
-Aksara adalah bahasa pemrograman berbasis bahasa Indonesia yang dirancang sebagai Source-to-Source Compiler atau Transpiler yang berjalan di atas bahasa Python. Proyek ini dioptimalkan untuk penggunaan di lingkungan Termux pada perangkat Android.
-🚀 Fitur Utama
-• Sintaks Bahasa Indonesia: Menggunakan kata kunci bahasa Indonesia yang natural untuk logika pemrograman.Mesin Transpiler Aman (Regex): Menggunakan modul re dengan pola word boundary (\b) untuk memastikan penggantian kata kunci tidak merusak nama variabel pengguna.Penanganan Error Kustom: Pesan kesalahan (error) telah diterjemahkan ke dalam bahasa Indonesia agar lebih ramah pengguna dan informatif, lengkap dengan informasi nomor baris.Eksekusi Global (CLI): Aksara dapat dijalankan dari direktori mana pun di terminal menggunakan perintah aksara <nama_file.ak>.Ekosistem Python: Aksara dapat menggunakan seluruh library dan pustaka yang ada di Python secara langsung.📚 Kamus Kata Kunci (Keyword Mapping)
-Aksara memetakan sintaks Python ke dalam istilah bahasa Indonesia berikut:
+Proyek ini dioptimalkan untuk Python 3.8+ dan nyaman dipakai di Termux (Android).
 
-Kategori
-Aksara
-Python
+---
 
-Logika & Alur
-jika, atau_jika, selain_itu
-if, elif, else
+## Pemasangan
 
-Perulangan
-untuk, selama, di_dalam, rentang
-for, while, in, range
+```bash
+# Linux / Windows / macOS
+pip install aksara-lang
 
-Kontrol
-hentikan, lanjutkan, kembalikan
-break, continue, return
+# Termux (Android) — NumPy dipakai fitur AI
+pkg install python-numpy
+pip install aksara-lang
+```
 
-Fungsi & Kelas
-fungsi, kelas, sebagai
-def, class, as
+Setelah terpasang, perintah `aksara` tersedia global.
 
-Error Handling
-coba, kecuali, akhirnya, bangkitkan
-try, except, finally, raise
+## Mulai Cepat
 
-Input/Output
-cetak, masukan, panjang
-print, input, len
+Simpan dengan ekstensi `.ak` (mis. `program.ak`):
 
-Tipe Data
-bulat, desimal, teks, daftar, kamus_data
-int, float, str, list, dict
-
-Boolean & Nilai
-benar, salah, kosong
-True, False, None
-
-Operator Logika
-dan, atau, bukan
-and, or, not
-
-
-🛠️ Instalasi di Termux
-Aksara menggunakan skrip instalasi otomatis untuk memudahkan distribusi dan penggunaan secara global.
-1. Buka terminal Termux dan masuk ke folder proyek aksara_lang.Jalankan skrip instalasi:Skrip ini akan menyalin file mesin utama ke /data/data/com.termux/files/usr/bin/ dan memberikan izin eksekusi secara otomatis.💻 Cara Penggunaan
-Simpan kode Anda dengan ekstensi .ak atau .aksara. Contoh file program.ak:
-fungsi sapa(nama):
-    cetak("Halo " + nama + "!")
+```aksara
+# komentar diawali tanda pagar
+fun sapa(nama) {
+    balik "Halo " + nama + "!"
+}
 
 nama_user = masukan("Siapa nama Anda? ")
-sapa(nama_user)
+cetak sapa(nama_user)
 
 angka = bulat(masukan("Masukkan angka: "))
-jika angka % 2 == 0:
-    cetak("Ini adalah angka genap")
-selain_itu:
-    cetak("Ini adalah angka ganjil")
+jika angka % 2 == 0 {
+    cetak "Angka genap"
+} lain {
+    cetak "Angka ganjil"
+}
+```
 
-Jalankan program melalui terminal:
+Jalankan:
+
+```bash
 aksara program.ak
+```
 
-⚠️ Penanganan Kesalahan (Error Handling)
-Aksara akan memberikan informasi kesalahan dalam bahasa Indonesia jika terjadi masalah pada kode Anda:
-• [Kesalahan Sintaks]: Muncul jika ada kesalahan penulisan, seperti tanda kutip yang belum ditutup.[Variabel Tidak Dikenal]: Muncul jika Anda menggunakan variabel yang belum dibuat.[Kesalahan Indentasi]: Muncul jika penggunaan spasi atau tab tidak konsisten.[Kesalahan Logika]: Muncul pada masalah eksekusi seperti pembagian dengan nol.🏗️ Struktur Arsitektur
-Proyek ini menggunakan model All-in-One, di mana seluruh kamus dan mesin transpiler disatukan dalam satu file tunggal untuk menghindari error ModuleNotFoundError saat dijalankan secara global. Mesin ini membaca argumen baris perintah secara dinamis menggunakan sys.argv.
+Blok kode memakai kurung kurawal `{ }` (bukan indentasi). Baris-baris di dalam
+satu blok tidak wajib menyatu; penulisan bebas seperti contoh berikut:
 
-───
+```aksara
+cetak "ini masih satu blok dengan if"
+```
 
-Kontributor: Dikembangkan sebagai proyek belajar pemrograman Python dan arsitektur bahasa pemrograman
+## Referensi Bahasa
+
+### Komentar
+
+Awali dengan `#` sampai akhir baris:
+
+```aksara
+# ini komentar
+cetak "halo"  # komentar di akhir baris
+```
+
+### Tipe Data Dasar
+
+| Tipe | Nilai | Contoh |
+|------|-------|--------|
+| Angka | bilangan bulat atau desimal | `42`, `3.14`, `-7` |
+| String | teks dalam kutip ganda | `"halo"` |
+| Boolean | `benar` / `salah` | `benar` |
+| Nil | tidak ada nilai | `nil` |
+| Daftar | list berurutan | `[1, 2, 3]` |
+| Kamus | pasangan kunci-nilai | `["a": 1, "b": 2]` |
+
+String mendukung escape: `\n` (baris baru), `\t` (tab), `\"` (kutip),
+`\\` (garis miring), `\uXXXX` (Unicode):
+
+```aksara
+cetak "baris\nbaru"
+cetak "cinta \u2764"   # cinta ❤
+```
+
+#### String Template
+
+Di dalam string, `{nama_variabel}` disisipi nilainya:
+
+```aksara
+nama = "Aksara"
+versi = 2
+cetak "{nama} versi {versi}"   # Aksara versi 2
+```
+
+### Variabel
+
+Assignment memakai `=`. Variabel bisa dipakai tanpa deklarasi tipe:
+
+```aksara
+nama = "Eka"
+umur = 30
+hasil = [10, 20]
+profil = ["nama": nama, "umur": umur]
+```
+
+### Operator
+
+| Kategori | Operator |
+|----------|----------|
+| Aritmatika | `+ - * / % **` |
+| Perbandingan | `== != < > <= >=` |
+| Logika | `dan`, `atau`, `bukan` |
+| Null Coalescing | `??` |
+
+Catatan: `+` yang salah satu operand-nya string akan menyatukan keduanya
+sebagai teks. Umum aja: khusus string, `*` bisa mengulang (`"ha" * 3`).
+
+```aksara
+cetak "Nilai: " + 5        # Nilai: 5
+cetak benar dan salah      # False
+nama = nil
+cetak nama ?? "Tanpa nama" # Tanpa nama
+```
+
+### Daftar (List)
+
+```aksara
+buat = []
+buah = ["apel", "mangga", "jeruk"]
+cetak buah[0]        # apel
+buah[1] = "pisang"   # ubah elemen
+```
+
+#### Slice (tambahan)
+
+Potongan `a..b` bersifat **inklusif** di kedua ujungnya:
+
+```aksara
+data = [10, 20, 30, 40, 50]
+cetak data[1..3]   # [20, 30, 40]
+cetak data[2..]    # [30, 40, 50]
+cetak data[..2]    # [10, 20, 30]
+```
+
+### Kamus (Dict)
+
+```aksara
+profil = ["nama": "Eka", "umur": 30]
+cetak profil["nama"]       # Eka
+profil["kota"] = "Jakarta"
+cetak kunci(profil)        # ['nama', 'umur', 'kota']
+```
+
+### Percabangan
+
+```aksara
+jika skor >= 90 {
+    cetak "A"
+} atau_jika skor >= 80 {
+    cetak "B"
+} lain {
+    cetak "C"
+}
+```
+
+### Perulangan
+
+#### `ulang` — sejumlah kali
+
+```aksara
+ulang 3 { cetak "beep" }
+```
+
+#### `untuk` — atas rentang
+
+Rentang `a..b` inklusif (termasuk `b`):
+
+```aksara
+untuk i dalam 1..5 {
+    cetak i          # 1 2 3 4 5
+}
+```
+
+#### `untuk` — atas daftar
+
+```aksara
+untuk item dalam [10, 20, 30] {
+    cetak item
+}
+```
+
+#### `selama` — selama kondisi benar
+
+```aksara
+x = 5
+selama x > 0 {
+    cetak x
+    x = x - 1
+}
+```
+
+`henti` (break) menghentikan perulangan, `lanjut` (continue) melompat ke
+iterasi berikutnya:
+
+```aksara
+untuk i dalam 1..10 {
+    jika i == 2 { lanjut }
+    jika i == 5 { henti }
+    cetak i        # 1 3 4
+}
+```
+
+### Fungsi
+
+```aksara
+fun tambah(a, b) {
+    balik a + b
+}
+
+cetak tambah(3, 4)   # 7
+```
+
+- Deklarasi: `fun nama(param, ...) { ... }`
+- Kembalian: `balik ekspresi`
+- Tanpa `balik`, fungsi mengembalikan `nil`.
+- Fungsi memakai *closure*: bisa membaca variabel dari lingkup pembuatnya.
+
+### Kesalahan
+
+Melempar galat:
+
+```aksara
+jika saldo < 0 {
+    galat "Saldo tidak boleh negatif"
+}
+```
+
+Menangkap galat — `coba`, `kecuali` (dengan atau tanpa tipe), `akhirnya`:
+
+```aksara
+coba {
+    x = 10 / 0
+} kecuali [ZeroDivisionError] sebagai e {
+    cetak "tertangkap: " + e
+} kecuali sebagai e {
+    cetak "galat lain: " + e
+} akhirnya {
+    cetak "selalu dijalankan"
+}
+```
+
+Tipe error yang bisa dipakai: tipe Python apa pun, mis. `ValueError`,
+`TypeError`, `IndexError`, `KeyError`, `NameError`, `RuntimeError`.
+
+### Impor
+
+Memuat modul Python:
+
+```aksara
+impor "os" sbg os
+cetak os.getcwd()
+
+impor "math" sbg mt
+cetak mt.sqrt(16)
+```
+
+Memuat file sumber Aksara lain (mis. isi `stdlib/larik.ak`):
+
+```aksara
+impor "larik.ak" sbg lk
+data = [10, 20, 30, 40, 50]
+cetak lk.rata_rata(data)
+```
+
+### Fungsi Bawaan (Builtins)
+
+| Kelompok | Fungsi |
+|----------|--------|
+| I/O | `cetak(...)`, `masukan(prompt)` |
+| Konversi | `bulat(x)`, `desimal(x)`, `teks(x)`, `daftar(...)` |
+| Koleksi | `panjang(x)` |
+| Kamus | `kunci`, `nilai`, `isi`, `ada`, `kosong`, `hapus`, `tambah`, `gabung`, `salin`, `bersihkan`, `dapatkan`, `tukar` |
+| AI | `tebak`, `jenis`, `ringkas`, `kelompok`, `frekuensi`, `normalisasi`, `korelasi`, `cari_mirip`, `rekomendasi`, `encode`, `acak_cerdas`, `deteksi_bahasa`, `periksa_ejaan`, `auto_label`, `urutkan_ai`, `cluster_teks`, `ubah_gaya`, `ekstrak_entitas`, `simulasi_keputusan`, `rangking_tfidf`, `pca`, `jaring_syaraf` |
+
+Fungsi buatan sendiri bisa menaungi builtin yang namanya sama.
+
+### Pustaka Standar `larik` (`stdlib/larik.ak`)
+
+Statistik & transformasi array: `rata_rata`, `jumlah`, `maksimum`,
+`minimum`, `rentang`, `median`, `variansi`, `simpangan_baku`,
+`normalisasi`, `skala`, `tebak` (prediksi sederhana), `kelompok`,
+`outlier`, `pola`, `frekuensi`.
+
+## Perintah CLI
+
+```bash
+aksara program.ak        # jalankan
+aksara program.ak -t     # tampilkan token hasil lexer
+aksara program.ak -a     # tampilkan AST
+aksara program.ak -c     # kompilasi ke Python (output di stdout)
+aksara -v                # versi
+```
+
+## Arsitektur
+
+```
+program.ak
+    │
+    ▼
+  Lexer (aksara/lexer/tokenizer.py)   teks → token
+    │
+    ▼
+ Parser (aksara/parser/parser.py)     token → AST (aksara/ast/nodes.py)
+    │
+    ├───────────────► Interpreter (aksara/interpreter/evaluator.py)
+    │                    eksekusi langsung, environment ber-scope
+    │
+    └───────────────► Compiler (aksara/compiler/python.py)
+                         AST → kode Python murni
+```
+
+- **Interpreter**: evaluator pohon (tree-walker) dengan environment berantai
+  (`aksara/interpreter/environment.py`) untuk closure di fungsi.
+- **Compiler**: menyusun AST menjadi Python yang setara semantik, termasuk
+  rentang inklusif, `??`, string template, dan impor modul `.ak` (dimuat
+  lewat runtime pada saat program dijalankan).
+- **AI builtin**: `aksara/ai/*` (prediksi, NLP, clustering, dsb.) — opsional
+  memakai NumPy pada sebagian modul.
+- Model file: paket Python satu proyek; CLI via `[project.scripts] aksara`.
+
+## Menjalankan Tes
+
+```bash
+pip install pytest
+pytest tests/
+```
+
+Berisi uji lexer, parser, kesetaraan interpreter↔kompiler, dan regresi.
+
+## Keterbatasan & Peta Jalan
+
+- String hanya kutip ganda `"..."`; belum ada kutip tunggal.
+- `cetak` memakai satu ekspresi (multi-argumen belum didukung).
+- Tidak ada tuple; daftar dan kamus sudah cukup untuk mayoritas kasus.
+- Pesan error interpreter berbahasa Indonesia; hasil kompilasi memakai pesan
+  Python asli.
+- Peta jalan: rilis 0.6.0 (stabilkan API), dokumentasi lengkap, contoh lebih
+  banyak, dan optimasi numerik lewat NumPy.
+
+---
+
+Kontributor: dikembangkan sebagai proyek belajar pemrograman Python dan
+arsitektur bahasa pemrograman.

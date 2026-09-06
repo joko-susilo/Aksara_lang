@@ -130,18 +130,16 @@ class Parser:
         self.ambil("KATA_KUNCI", "untuk")
         var = self.ambil("NAMA").nilai
         self.ambil("KATA_KUNCI", "dalam")
-        #cek interalist atau rentang
-        if self.lihat().tipe == "NAMA":
-            list_name = self.ambil("NAMA").nilai
-            blok = self.parse_blok()
-            return Untuk(var,NamaVariabel(list_name),None,blok)
-        else:
-            #rentang angka
-            mulai = self.parse_ekspresi()
-            self.ambil("OPERATOR","..")
+        ekspresi = self.parse_ekspresi()
+        # Rentang angka: untuk i dalam mulai..akhir (inklusi)
+        if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "..":
+            self.ambil("OPERATOR", "..")
             akhir = self.parse_ekspresi()
             blok = self.parse_blok()
-            return Untuk(var,mulai,akhir,blok)
+            return Untuk(var, ekspresi, akhir, blok)
+        # Iterasi daftar / hasil ekspresi apa pun
+        blok = self.parse_blok()
+        return Untuk(var, ekspresi, None, blok)
 
     def parse_selama(self):
         self.ambil("KATA_KUNCI", "selama")
