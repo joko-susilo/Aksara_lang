@@ -193,8 +193,11 @@ class Parser:
 
     def parse_cetak(self):
         self.ambil("KATA_KUNCI", "cetak")
-        ekspresi = self.parse_ekspresi()
-        return Cetak(ekspresi)
+        argumen = [self.parse_ekspresi()]
+        while self.lihat().tipe == "KOMA":
+            self.ambil("KOMA")
+            argumen.append(self.parse_ekspresi())
+        return Cetak(argumen)
 
     def parse_balik(self):
         self.ambil("KATA_KUNCI", "balik")
@@ -222,15 +225,17 @@ class Parser:
 
     def parse_ekspresi_stmt(self):
         ekspr = self.parse_ekspresi()
-        if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "=":
+        if self.lihat().tipe == "OPERATOR" and self.lihat().nilai in ("=", "+=", "-=", "*=", "/=", "%="):
         # Pastikan ekspr adalah target yang valid
             if not isinstance(ekspr, (NamaVariabel, AksesIndeks, AksesAtribut)):
                 raise SyntaxError(f"Baris {self.lihat().baris}: Target assignment tidak valid")
                 
-            self.ambil("OPERATOR", "=")
+            op = self.ambil("OPERATOR").nilai
             nilai = self.parse_ekspresi()
+            if op == "=":
         # Gunakan Assign(target_node, nilai) — target_node adalah objek, bukan string
-            return Assign(ekspr, nilai)
+                return Assign(ekspr, nilai)
+            return AssignOp(ekspr, op[0], nilai)
         return ekspr
     # ----------------------------------------------------------------------
     # Ekspresi (dengan prioritas)

@@ -18,10 +18,10 @@ from aksara.lexer.tokens import Token, KATA_KUNCI
 # Pola regex untuk setiap jenis token (diurutkan dari yang paling spesifik)
 TOKEN_SPEC = [
     ("KOMENTAR",    r"#[^\n]*"),                    # Komentar: # sampai akhir baris
-    ("STRING",      r'"(?:[^"\\]|\\.)*"'),    # String: "..." dengan dukungan escape (\" \\ \n \t \uXXXX)
+    ("STRING",      r"'(?:[^'\\]|\\.)*'|\"(?:[^\"\\]|\\.)*\""),  # String: '...' atau "..." dgn escape
     ("ANGKA",       r"\d+(\.\d+)?"),  
     ("TITIK_DUA",    r":"),
-    ("OPERATOR", r"==|!=|<=|>=|\*\*|\.\.|\?\?|[+\-*/%<>=]"), # Operator: multi-karakter dulu, lalu tunggal
+    ("OPERATOR", r"\*\*=|==|!=|<=|>=|\+=|-=|\*=|/=|%=|\*\*|\.\.|\?\?|[+\-*/%<>=]"), # Operator: multi-karakter dulu, lalu tunggal
     ("KURUNG_KUWAL", r"[{}]"),  
     ("KURUNG_SIKU", r"[\[\]]"),    
     ("KURUNG",      r"[()]"),

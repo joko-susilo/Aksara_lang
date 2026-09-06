@@ -19,26 +19,28 @@ import os
 import re
 import sys
 
-from aksara.ast.nodes import (AksesAtribut, AksesIndeks, Angka, Assign, Balik,
-                              Boolean, Cetak, Coba, Daftar, DefinisiFungsi,
-                              DefinisiKelas, Galat, Henti, Impor, ImporLokal,
-                              Ini, Jika, Kamus, Lanjut, Nil, OperasiBiner,
-                              PanggilFungsi, Selama, String, Ulangi, Untuk,
-                              NamaVariabel)
+from aksara.ast.nodes import (AksesAtribut, AksesIndeks, Angka, Assign,
+                              AssignOp, Balik, Boolean, Cetak, Coba, Daftar,
+                              DefinisiFungsi, DefinisiKelas, Galat, Henti,
+                              Impor, ImporLokal, Ini, Induk, Jika, Kamus,
+                              Lanjut, Nil, OperasiBiner, PanggilFungsi,
+                              Selama, String, Ulangi, Untuk, NamaVariabel)
 from aksara.lexer.tokenizer import tokenize
 from aksara.parser.parser import Parser
 from aksara.interpreter.environment import Environment
 from aksara.interpreter.evaluator import evaluate
 
-TIPE_STATEMENT = (Assign, Balik, Cetak, Coba, DefinisiFungsi, DefinisiKelas,
-                  Galat, Henti, Impor, ImporLokal, Jika, Lanjut, Selama,
-                  Ulangi, Untuk)
+TIPE_STATEMENT = (Assign, AssignOp, Balik, Cetak, Coba, DefinisiFungsi,
+                  DefinisiKelas, Galat, Henti, Impor, ImporLokal, Jika, Lanjut,
+                  Selama, Ulangi, Untuk)
 
 PROMPT = "aksara> "
 PROMPT_LANJUT = "... "
 PROMPT_HEREDOC = ":   "
 
-_POLOSKAN_STRING = re.compile(r'"(?:[^"\\]|\\.)*"')
+_POLOSKAN_STRING = re.compile(
+    r"'(?:[^'\\]|\\.)*'|\"(?:[^\"\\]|\\.)*\""
+)
 
 # Izinkan readline kalau tersedia (Linux / Termux).
 try:

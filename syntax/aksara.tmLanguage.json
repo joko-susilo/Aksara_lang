@@ -1,0 +1,44 @@
+{
+  "name": "Aksara",
+  "scopeName": "source.aksara",
+  "fileTypes": ["ak", "aksara"],
+  "patterns": [
+    { "include": "#komentar" },
+    { "include": "#string" },
+    { "include": "#angka" },
+    { "include": "#keyword" },
+    { "include": "#operator" }
+  ],
+  "repository": {
+    "komentar": {
+      "patterns": [{ "match": "#[^\\n]*", "name": "comment.line.number-sign.aksara" }]
+    },
+    "string": {
+      "patterns": [
+        {
+          "match": "(['\"])(?:\\\\.|(?!\\1).)*(\\1)",
+          "name": "string.quoted.aksara"
+        }
+      ]
+    },
+    "angka": {
+      "patterns": [{ "match": "\\b\\d+(\\.\\d+)?\\b", "name": "constant.numeric.aksara" }]
+    },
+    "keyword": {
+      "patterns": [
+        {
+          "match": "\\b(jika|atau_jika|lain|ulang|untuk|dalam|selama|henti|lanjut|balik|cetak|benar|salah|nil|impor|sbg|dan|atau|bukan|coba|kecuali|akhirnya|sebagai|galat|kelas|ini|dari|induk|fun)\\b",
+          "name": "keyword.control.aksara"
+        }
+      ]
+    },
+    "operator": {
+      "patterns": [
+        {
+          "match": "(\\*\\*=|\\+=|-=|\\*=|/=|%=|==|!=|<=|>=|\\*\\*|\\.\\.|\\?\\?|[+*\\-/%<>=])",
+          "name": "keyword.operator.aksara"
+        }
+      ]
+    }
+  }
+}

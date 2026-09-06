@@ -97,13 +97,24 @@ cetak "{nama} versi {versi}"   # Aksara versi 2
 
 ### Variabel
 
-Assignment memakai `=`. Variabel bisa dipakai tanpa deklarasi tipe:
+Assignment memakai `=`; operator gabungan `+=`, `-=`, `*=`, `/=`, `%=`
+mengubah dan menetapkan sekaligus. Variabel bisa dipakai tanpa deklarasi tipe:
 
 ```aksara
 nama = "Eka"
 umur = 30
+umur += 1          # 31
+skor *= 2
 hasil = [10, 20]
 profil = ["nama": nama, "umur": umur]
+```
+
+`cetak` menerima beberapa argumen (dipisah spasi saat dicetak), dan string
+bisa memakai kutip tunggal atau ganda:
+
+```aksara
+cetak "Nilai:", skor, "poin"   # Nilai: ... poin
+teks = 'kutip tunggal juga boleh'
 ```
 
 ### Operator
@@ -370,6 +381,7 @@ Modul-modul dalam folder `stdlib/` (dipakai lewat `impor "modul.ak" sbg x`):
 | `berkas.ak` | File: `baca_file`, `baca_baris`, `tulis_file`, `tambah_ke_file`, `apakah_ada`, `hapus_file`, `ukuran_file`, `folder_sekarang`, `daftar_folder`, `wujud_folder` |
 | `waktu.ak` | Waktu: `detik_sekarang`, `waktu_teks`, `waktu_teks_kustom`, `tahun`, `bulan`, `hari`, `jam`, `menit`, `detik`, `tidur` |
 | `ml.ak` | Machine Learning: `latih(X, y)`, `ramal(model, X)` (jaringan saraf numpy bawaan) |
+| `model.ak` | Simpan/muat model: `simpan(model, jalan)`, `muat(jalan)` (JSON) |
 | `data.ak` | Data & metrik AI: `bagi`, `akurasi`, `galat_rata`, `ambil_selisih` |
 | `json.ak` | JSON: `urai(teks)`, `ubah(data)`, `ubah_indah(data)` |
 | `csv.ak` | CSV: `baca(jalan)`, `tulis(jalan, baris)`, `baca_kamus(jalan)` |
@@ -494,8 +506,8 @@ Berisi uji lexer, parser, kesetaraan interpreter↔kompiler, dan regresi.
 
 ## Keterbatasan & Peta Jalan
 
-- String hanya kutip ganda `"..."`; belum ada kutip tunggal.
-- `cetak` memakai satu ekspresi (multi-argumen belum didukung).
+- String hanya kutip ganda & tunggal; belum ada apit tiga baris.
+- `cetak` memakai beberapa argumen (dipisah spasi); multi-baris string belum.
 - Tidak ada tuple; daftar dan kamus sudah cukup untuk mayoritas kasus.
 - Pesan error interpreter berbahasa Indonesia; hasil kompilasi memakai pesan
   Python asli.

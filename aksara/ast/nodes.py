@@ -99,10 +99,11 @@ class AksesAtribut(ASTNode):
 
 # ---------- Statement ----------
 class Cetak(ASTNode):
-    def __init__(self, ekspresi):
-        self.ekspresi = ekspresi
+    def __init__(self, argumen: list):
+        """cetak a, b, c — argumen dipisah spasi saat output."""
+        self.argumen = argumen
     def __repr__(self):
-        return f"Cetak({self.ekspresi})"
+        return f"Cetak({self.argumen})"
 
 class Ulangi(ASTNode):
     def __init__(self, jumlah, blok: list):
@@ -188,6 +189,16 @@ class Assign(ASTNode):
         self.nilai = nilai
     def __repr__(self):
         return f"Assign({self.target} = {self.nilai})"
+
+
+class AssignOp(ASTNode):
+    """Assignment gabungan: target op= nilai (mis. x += 1)."""
+    def __init__(self, target, op, nilai):
+        self.target = target
+        self.op = op
+        self.nilai = nilai
+    def __repr__(self):
+        return f"AssignOp({self.target} {self.op}= {self.nilai})"
 class KecualiCabang(ASTNode):
     def __init__(self,tipe_error,var_error,blok):
         self.tipe_error = tipe_error

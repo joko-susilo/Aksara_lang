@@ -4,6 +4,19 @@ Semua perubahan penting proyek Aksara dicatat di sini.
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/);
 versi mengikuti [Semantic Versioning](https://semver.org/).
 
+## [0.12.0] - 2026-09-07
+
+### Ditambahkan
+- Operator gabungan: `+=`, `-=`, `*=`, `/=`, `%=` (variabel, indeks, atribut).
+- `cetak` multi-argumen: `cetak "x", 1, "%"` dipisah spasi.
+- String kutip tunggal `'...'` (setara kutip ganda, dgn escape).
+- Stdlib `model.ak`: `simpan(model, jalan)` / `muat(jalan)` — persistensi
+  model hasil `latih()` ke JSON.
+- CI GitHub Actions (`pytest` di Python 3.9–3.12).
+- Grammar syntax highlighting TextMate (`syntax/aksara.tmLanguage.json`
+  + panduan pemakaian VSCode/Neovim).
+- Tes tambahan (total 114).
+
 ## [0.11.0] - 2026-09-06
 
 ### Ditambahkan

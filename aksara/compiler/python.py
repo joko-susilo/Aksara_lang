@@ -13,10 +13,11 @@
 # limitations under the License.
 
 from aksara.ast.nodes import (
-    Angka, AksesAtribut, AksesIndeks, Assign, Balik, Boolean, Cetak, Coba,
-    Daftar, DefinisiFungsi, DefinisiKelas, Galat, Henti, Impor, ImporLokal,
-    Ini, Induk, Jika, Kamus, Lanjut, NamaVariabel, Nil, OperasiBiner,
-    OperasiUnary, PanggilFungsi, Selama, Slice, String, Ulangi, Untuk,
+    Angka, AksesAtribut, AksesIndeks, Assign, AssignOp, Balik, Boolean, Cetak,
+    Coba, Daftar, DefinisiFungsi, DefinisiKelas, Galat, Henti, Impor,
+    ImporLokal, Ini, Induk, Jika, Kamus, Lanjut, NamaVariabel, Nil,
+    OperasiBiner, OperasiUnary, PanggilFungsi, Selama, Slice, String, Ulangi,
+    Untuk,
 )
 from aksara.interpreter.builtins import BUILTINS
 
@@ -199,7 +200,11 @@ class AksaraCompiler:
         pad = self._pad()
 
         if isinstance(node, Cetak):
-            return [f"{pad}print({self._expr(node.ekspresi)})"]
+            args = ", ".join(self._expr(a) for a in node.argumen)
+            return [f"{pad}print({args})"]
+
+        if isinstance(node, AssignOp):
+            return [f"{pad}{self._target(node.target)} {node.op}= {self._expr(node.nilai)}"]
 
         if isinstance(node, Assign):
             return [f"{pad}{self._target(node.target)} = {self._expr(node.nilai)}"]

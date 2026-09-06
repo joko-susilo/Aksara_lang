@@ -50,6 +50,41 @@ def _cari_modul_aksara(nama_file) -> str:
     return None
 
 
+def _nilai_biner(op, kiri, kanan):
+    """Terapkan operator aritmetika pada dua nilai (dipakai assign gabungan)."""
+    if op == '+':
+        if isinstance(kiri, str) or isinstance(kanan, str):
+            return str(kiri) + str(kanan)
+        return kiri + kanan
+    if op == '-':
+        return kiri - kanan
+    if op == '*':
+        return kiri * kanan
+    if op == '/':
+        return kiri / kanan
+    if op == '%':
+        return kiri % kanan
+    raise SyntaxError(f"Operator gabungan '{op}=' tidak dikenal")
+
+
+def _tetapkan(target, nilai, env):
+    """Menempatkan nilai ke target assignment (variabel/indeks/atribut)."""
+    if isinstance(target, NamaVariabel):
+        try:
+            env.assign(target.nama, nilai)
+        except NameError:
+            env.define(target.nama, nilai)
+    elif isinstance(target, AksesIndeks):
+        obj = evaluate(target.objek, env)
+        indeks = evaluate(target.indeks, env)
+        obj[indeks] = nilai
+    elif isinstance(target, AksesAtribut):
+        obj = evaluate(target.objek, env)
+        setattr(obj, target.atribut, nilai)
+    else:
+        raise RuntimeError(f"Target assignment tidak didukung: {type(target).__name__}")
+
+
 def evaluate(node, env):
     """Mengevaluasi sebuah node AST di dalam environment yang diberikan."""
 
@@ -104,9 +139,9 @@ def evaluate(node, env):
 
     # --- Statement ---
     elif isinstance(node, Cetak):
-        nilai = evaluate(node.ekspresi, env)
-        print(nilai)
-        return nilai
+        nilai = [evaluate(e, env) for e in node.argumen]
+        print(*nilai)
+        return None if not nilai else nilai[-1]
     elif isinstance(node, Ulangi):
         return eval_ulangi(node, env)
     elif isinstance(node, Untuk):
@@ -138,23 +173,16 @@ def evaluate(node, env):
         return aksara_impor(node.nama_modul, node.alias, env)
     elif isinstance(node, Assign):
         nilai = evaluate(node.nilai, env)
-        target = node.target
-        if isinstance (target,NamaVariabel):
-           try:
-               env.assign(target.nama,nilai)
-           except NameError:
-               env.define(target.nama,nilai)
-        elif isinstance (target,AksesIndeks):
-            obj = evaluate(target.objek,env)
-            indeks =evaluate(target.indeks,env)
-            obj[indeks]=nilai
-        elif isinstance (target,AksesAtribut):
-            obj = evaluate(target.objek,env)
-            setattr(obj,target.atribut,nilai)
-        else:
-            raise RuntimeError(f"Target assignment tidak didukung: {type(target).__name__}")
+        _tetapkan(node.target, nilai, env)
         return nilai
         
+    elif isinstance(node, AssignOp):
+        kiri = evaluate(node.target, env)
+        kanan = evaluate(node.nilai, env)
+        hasil = _nilai_biner(node.op, kiri, kanan)
+        _tetapkan(node.target, hasil, env)
+        return hasil
+
     elif isinstance(node, Coba):
         try:
             return evaluate(node.blok_coba, env)
