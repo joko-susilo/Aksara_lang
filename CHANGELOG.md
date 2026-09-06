@@ -4,6 +4,20 @@ Semua perubahan penting proyek Aksara dicatat di sini.
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/);
 versi mengikuti [Semantic Versioning](https://semver.org/).
 
+## [0.13.0] - 2026-09-07
+
+### Ditambahkan
+- Portofolio AI: `PORTFOLIO.md` + 4 demo deterministik di
+  `examples/ai_live/` (regresi harga rumah, sentimen Indonesia, deteksi
+  anomali, pencarian dokumen mirip) — output asli terukur di dokumentasi.
+- `vektor.ak`: `dot`, `norma`, `normalisasi`, `kosinus`, `jumlah`.
+- `ml.latih` meneruskan parameter `hidden`/`iterasi`/`laju`.
+- `larik.ak`: fungsi statistik lanjutan dipulihkan — `median`, `variansi`,
+  `simpangan_baku`, `outlier`, `pola`, `frekuensi`.
+- Koma penutup (trailing comma) didukung di list/kamus literal, argumen
+  pemanggilan, dan parameter fungsi.
+- Tes tambahan (total 119).
+
 ## [0.12.0] - 2026-09-07
 
 ### Ditambahkan

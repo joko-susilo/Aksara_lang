@@ -180,13 +180,14 @@ class Parser:
             parameter_default.append(default)
         while self.lihat().tipe == "KOMA":
             self.ambil("KOMA")
-            nama_p = self.ambil("NAMA").nilai
-            default = None
-            if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "=":
-                self.ambil("OPERATOR", "=")
-                default = self.parse_ekspresi()
-            parameter.append(nama_p)
-            parameter_default.append(default)
+            if not (self.lihat().tipe == "KURUNG" and self.lihat().nilai == ")"):
+                nama_p = self.ambil("NAMA").nilai
+                default = None
+                if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "=":
+                    self.ambil("OPERATOR", "=")
+                    default = self.parse_ekspresi()
+                parameter.append(nama_p)
+                parameter_default.append(default)
         self.ambil("KURUNG", ")")
         blok = self.parse_blok()
         return DefinisiFungsi(nama, parameter, blok, parameter_default)
@@ -345,6 +346,8 @@ class Parser:
                             args.append(self.parse_ekspresi())
                         if self.lihat().tipe == "KOMA":
                             self.ambil("KOMA")
+                            if self.lihat().tipe == "KURUNG" and self.lihat().nilai == ")":
+                                break  # koma penutup opsional
                             continue
                         break
                 self.ambil("KURUNG", ")")
@@ -461,6 +464,8 @@ class Parser:
                 
                 while self.lihat().tipe == "KOMA":
                     self.ambil("KOMA")
+                    if self.lihat().tipe == "KURUNG_SIKU" and self.lihat().nilai == "]":
+                        break  # koma penutup opsional
                     kunci = self.parse_ekspresi()
                     self.ambil("TITIK_DUA")
                     nilai = self.parse_ekspresi()
@@ -468,10 +473,12 @@ class Parser:
                 self.ambil("KURUNG_SIKU","]")
                 return Kamus(pasangan)
             else:
-                #list biasa
+                #list biasa (rawat koma penutup)
                 elemen = [elemen_pertama]
                 while self.lihat().tipe == "KOMA":
                     self.ambil("KOMA")
+                    if self.lihat().tipe == "KURUNG_SIKU" and self.lihat().nilai == "]":
+                        break  # koma penutup opsional
                     elemen.append(self.parse_ekspresi())
                 self.ambil("KURUNG_SIKU","]")
                 return Daftar(elemen)

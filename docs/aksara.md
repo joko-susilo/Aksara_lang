@@ -380,14 +380,18 @@ Modul-modul dalam folder `stdlib/` (dipakai lewat `impor "modul.ak" sbg x`):
 | `koleksi.ak` | Daftar: `urutkan`, `urutkan_balik`, `unik`, `balik_list`, `gabung_list`, `cari_indeks`, `hitung`, `potong`, `hapus_index` |
 | `berkas.ak` | File: `baca_file`, `baca_baris`, `tulis_file`, `tambah_ke_file`, `apakah_ada`, `hapus_file`, `ukuran_file`, `folder_sekarang`, `daftar_folder`, `wujud_folder` |
 | `waktu.ak` | Waktu: `detik_sekarang`, `waktu_teks`, `waktu_teks_kustom`, `tahun`, `bulan`, `hari`, `jam`, `menit`, `detik`, `tidur` |
-| `ml.ak` | Machine Learning: `latih(X, y)`, `ramal(model, X)` (jaringan saraf numpy bawaan) |
+| `ml.ak` | Machine Learning: `latih(X, y, hidden, iterasi, laju)`, `ramal(model, X)` (jaringan saraf numpy bawaan) |
 | `model.ak` | Simpan/muat model: `simpan(model, jalan)`, `muat(jalan)` (JSON) |
+| `vektor.ak` | Vektor: `dot`, `norma`, `normalisasi`, `kosinus`, `jumlah` |
 | `data.ak` | Data & metrik AI: `bagi`, `akurasi`, `galat_rata`, `ambil_selisih` |
 | `json.ak` | JSON: `urai(teks)`, `ubah(data)`, `ubah_indah(data)` |
 | `csv.ak` | CSV: `baca(jalan)`, `tulis(jalan, baris)`, `baca_kamus(jalan)` |
 | `web.ak` | HTTP: `dapat`, `dapat_teks`, `dapat_json`, `kirim`, `status`, `header` *(butuh `requests`)* |
 | `llm.ak` | LLM: `tanya`, `ringkas_teks`, `terjemahkan`, `tulis_kode`, `tulis_puisi` (format OpenAI-compatible; butuh `requests` + API key) |
 | `larik.ak` | Statistik array: `rata_rata`, `jumlah`, `maksimum` (`terbesar`), `minimum`, `rentang`, `median`, `variansi`, `simpangan_baku`, `normalisasi`, `skala`, `tebak`, `kelompok`, `outlier`, `pola`, `frekuensi` |
+
+Contoh portofolio AI (dengan output terukur): lihat `PORTFOLIO.md` dan
+demo di `examples/ai_live/`.
 
 Contoh:
 

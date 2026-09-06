@@ -9,8 +9,8 @@
 
 impor "aksara.ai.jaring_syaraf" sbg jaringan
 
-fun latih(X, y) {
-    balik jaringan.jaring_syaraf(X, y)
+fun latih(X, y, hidden = 8, iterasi = 500, laju = 0.1) {
+    balik jaringan.jaring_syaraf(X, y, hidden, iterasi, laju)
 }
 
 fun ramal(model, X) {
