@@ -30,9 +30,24 @@ class BreakException(Exception):
 class ContinueException(Exception):
     pass
 
+def _cari_modul_aksara(nama_file) -> str:
+    """Mencari file .ak: folder stdlib di dalam paket, ./stdlib, lalu folder kerja."""
+    import os
+    from aksara import __file__ as jalan_paket
+    kandidat = [
+        os.path.join(os.path.dirname(jalan_paket), "stdlib", nama_file),
+        f"stdlib/{nama_file}",
+        nama_file,
+    ]
+    for jalan in kandidat:
+        if os.path.exists(jalan):
+            return jalan
+    return None
+
+
 def evaluate(node, env):
     """Mengevaluasi sebuah node AST di dalam environment yang diberikan."""
-    
+
     # --- Literal ---
     if isinstance(node, Angka):
         return node.nilai
@@ -169,25 +184,14 @@ def evaluate(node, env):
         return hasil
         
     elif isinstance(node, ImporLokal):
-        import os
-        paths = [
-            f"stdlib/{node.nama_file}",
-            f"{node.nama_file}",
-        ]
-
-        file_path = None
-        for p in paths:
-            if os.path.exists(p):
-                file_path = p
-                break
-
+        file_path = _cari_modul_aksara(node.nama_file)
         if file_path is None:
             raise ImportError(f"Tidak dapat menemukan '{node.nama_file}'")
 
         from aksara.lexer.tokenizer import tokenize
         from aksara.parser.parser import Parser
 
-        with open(file_path) as f:
+        with open(file_path, encoding="utf-8") as f:
             kode = f.read()
 
         tokens = tokenize(kode)

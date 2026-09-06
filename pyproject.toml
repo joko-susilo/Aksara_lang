@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aksara-lang"
-version = "0.5.0"
+version = "0.6.0"
 description = "🇮🇩 Bahasa Pemrograman Indonesia Modern dengan AI Built-in"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -27,3 +27,6 @@ aksara = "aksara.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["aksara*"]
+
+[tool.setuptools.package-data]
+"aksara.stdlib" = ["*.ak"]

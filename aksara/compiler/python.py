@@ -323,14 +323,20 @@ _PENOLONG_IMPOR_LOKAL = '''import os as __os, types as __types
 
 def _muat_aksara(nama_file):
     """Memuat file .ak lewat runtime aksara saat program dijalankan."""
+    from aksara import __file__ as __ak_paket
     from aksara.lexer.tokenizer import tokenize
     from aksara.parser.parser import Parser
     from aksara.interpreter.environment import Environment
     from aksara.interpreter.evaluator import evaluate
 
-    for jalur in (f"stdlib/{nama_file}", nama_file):
-        if __os.path.exists(jalur):
-            with open(jalur, encoding="utf-8") as f:
+    jalur = (
+        __os.path.join(__os.path.dirname(__ak_paket), "stdlib", nama_file),
+        f"stdlib/{nama_file}",
+        nama_file,
+    )
+    for p in jalur:
+        if __os.path.exists(p):
+            with open(p, encoding="utf-8") as f:
                 kode = f.read()
             ast = Parser(tokenize(kode)).parse_program()
             env = Environment()
