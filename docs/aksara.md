@@ -281,18 +281,38 @@ cetak lk.rata_rata(data)
 |----------|--------|
 | I/O | `cetak(...)`, `masukan(prompt)` |
 | Konversi | `bulat(x)`, `desimal(x)`, `teks(x)`, `daftar(...)` |
-| Koleksi | `panjang(x)` |
+| Koleksi | `panjang(x)`, `dorong(daftar, x)` |
 | Kamus | `kunci`, `nilai`, `isi`, `ada`, `kosong`, `hapus`, `tambah`, `gabung`, `salin`, `bersihkan`, `dapatkan`, `tukar` |
 | AI | `tebak`, `jenis`, `ringkas`, `kelompok`, `frekuensi`, `normalisasi`, `korelasi`, `cari_mirip`, `rekomendasi`, `encode`, `acak_cerdas`, `deteksi_bahasa`, `periksa_ejaan`, `auto_label`, `urutkan_ai`, `cluster_teks`, `ubah_gaya`, `ekstrak_entitas`, `simulasi_keputusan`, `rangking_tfidf`, `pca`, `jaring_syaraf` |
 
 Fungsi buatan sendiri bisa menaungi builtin yang namanya sama.
 
-### Pustaka Standar `larik` (`stdlib/larik.ak`)
+### Pustaka Standar
 
-Statistik & transformasi array: `rata_rata`, `jumlah`, `maksimum`,
-`minimum`, `rentang`, `median`, `variansi`, `simpangan_baku`,
-`normalisasi`, `skala`, `tebak` (prediksi sederhana), `kelompok`,
-`outlier`, `pola`, `frekuensi`.
+Modul-modul dalam folder `stdlib/` (dipakai lewat `impor "modul.ak" sbg x`):
+
+| Modul | Isi |
+|-------|-----|
+| `teks.ak` | String: `huruf_besar`, `huruf_kecil`, `potong_teks`, `pisahkan`, `gabungkan`, `ganti`, `mengandung`, `awalan`, `akhiran`, `balik_teks`, `cari`, `jumlah_kata`, `judul`, `cek_kosong`, `ulang_teks`, `sub_teks` |
+| `mtk.ak` | Matematika: `mutlak`, `pangkat`, `akar`, `bulatkan`, `bulat_atas`, `bulat_bawah`, `genap`, `ganjil`, `terbesar`, `terkecil`, `acak`, `pilihan_terbanyak` |
+| `koleksi.ak` | Daftar: `urutkan`, `urutkan_balik`, `unik`, `balik_list`, `gabung_list`, `cari_indeks`, `hitung`, `potong`, `hapus_index` |
+| `berkas.ak` | File: `baca_file`, `baca_baris`, `tulis_file`, `tambah_ke_file`, `apakah_ada`, `hapus_file`, `ukuran_file`, `folder_sekarang`, `daftar_folder`, `wujud_folder` |
+| `waktu.ak` | Waktu: `detik_sekarang`, `waktu_teks`, `waktu_teks_kustom`, `tahun`, `bulan`, `hari`, `jam`, `menit`, `detik`, `tidur` |
+| `larik.ak` | Statistik array: `rata_rata`, `jumlah`, `maksimum` (`terbesar`), `minimum`, `rentang`, `median`, `variansi`, `simpangan_baku`, `normalisasi`, `skala`, `tebak`, `kelompok`, `outlier`, `pola`, `frekuensi` |
+
+Contoh:
+
+```aksara
+impor "teks.ak" sbg t
+impor "mtk.ak" sbg m
+impor "berkas.ak" sbg b
+
+cetak t.judul("halo dunia")          # Halo Dunia
+cetak m.akar(16)                      # 4.0
+cetak b.baca_file("catatan.txt")      # isi file
+```
+
+Contoh lengkap: `examples/stdlib.ak`.
 
 ## Perintah CLI
 

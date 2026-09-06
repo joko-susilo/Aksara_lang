@@ -58,6 +58,11 @@ def aksara_teks(x):
 def aksara_daftar(*args):
     return list(args)
 
+def aksara_dorong(daftar, nilai):
+    """Menambahkan elemen ke ujung daftar (mengubah daftar aslinya)."""
+    daftar.append(nilai)
+    return daftar
+
 def aksara_impor(nama_modul, alias, env):
     """Menangani statement impor. Memuat modul Python dan menyimpannya di environment."""
     modul = importlib.import_module(nama_modul)
@@ -129,6 +134,7 @@ BUILTINS = {
     "desimal": aksara_desimal,
     "teks": aksara_teks,
     "daftar": aksara_daftar,
+    "dorong": aksara_dorong,
        # Kamus
     "kunci": aksara_kunci,
     "nilai": aksara_nilai,

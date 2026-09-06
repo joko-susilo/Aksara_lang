@@ -51,7 +51,7 @@ fun normalisasi(data) {
     max_val = maksimum(data)
     hasil = []
     untuk n dalam data {
-        hasil[panjang(hasil)] = (n - min_val) / (max_val - min_val)
+        hasil = dorong(hasil, (n - min_val) / (max_val - min_val))
     }
     balik hasil
 }
@@ -59,7 +59,7 @@ fun normalisasi(data) {
 fun skala(data, faktor) {
     hasil = []
     untuk n dalam data {
-        hasil[panjang(hasil)] = n * faktor
+        hasil = dorong(hasil, n * faktor)
     }
     balik hasil
 }
@@ -89,7 +89,7 @@ fun kelompok(data, jumlah) {
     
     hasil = []
     untuk i dalam 0 .. jumlah - 1 {
-        hasil[i] = []
+        hasil = dorong(hasil, [])
     }
     
     untuk n dalam data {
@@ -97,7 +97,7 @@ fun kelompok(data, jumlah) {
         jika idx >= jumlah {
             idx = jumlah - 1
         }
-        hasil[idx][panjang(hasil[idx])] = n
+        dorong(hasil[idx], n)
     }
     balik hasil
 }

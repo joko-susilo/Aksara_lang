@@ -4,6 +4,19 @@ Semua perubahan penting proyek Aksara dicatat di sini.
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/);
 versi mengikuti [Semantic Versioning](https://semver.org/).
 
+## [0.7.0] - 2026-09-06
+
+### Ditambahkan
+- Pustaka standar (.ak) di `stdlib/`: `teks.ak`, `mtk.ak`, `koleksi.ak`,
+  `berkas.ak`, `waktu.ak` (di samping `larik.ak`).
+- Builtin `dorong(daftar, x)` untuk menambahkan elemen ke daftar.
+- Contoh `examples/stdlib.ak` dan tes `tests/test_stdlib.py`
+  (total 70 tes).
+
+### Diperbaiki
+- `larik.ak`: `normalisasi`, `skala`, `kelompok` (dan fungsi yang memakai
+  pola append) kini berfungsi berkat `dorong`.
+
 ## [0.6.2] - 2026-09-06
 
 ### Ditambahkan
