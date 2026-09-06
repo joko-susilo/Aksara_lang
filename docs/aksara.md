@@ -374,6 +374,7 @@ Modul-modul dalam folder `stdlib/` (dipakai lewat `impor "modul.ak" sbg x`):
 | `json.ak` | JSON: `urai(teks)`, `ubah(data)`, `ubah_indah(data)` |
 | `csv.ak` | CSV: `baca(jalan)`, `tulis(jalan, baris)`, `baca_kamus(jalan)` |
 | `web.ak` | HTTP: `dapat`, `dapat_teks`, `dapat_json`, `kirim`, `status`, `header` *(butuh `requests`)* |
+| `llm.ak` | LLM: `tanya`, `ringkas_teks`, `terjemahkan`, `tulis_kode`, `tulis_puisi` (format OpenAI-compatible; butuh `requests` + API key) |
 | `larik.ak` | Statistik array: `rata_rata`, `jumlah`, `maksimum` (`terbesar`), `minimum`, `rentang`, `median`, `variansi`, `simpangan_baku`, `normalisasi`, `skala`, `tebak`, `kelompok`, `outlier`, `pola`, `frekuensi` |
 
 Contoh:
@@ -389,6 +390,25 @@ cetak b.baca_file("catatan.txt")      # isi file
 ```
 
 Contoh lengkap: `examples/stdlib.ak`.
+
+### Panggil LLM dari Bahasa Aksara
+
+Modul `llm.ak` menghubungkan Aksara dengan model bahasa (format
+OpenAI-compatible: Groq, OpenAI, Gemini, Ollama lokal):
+
+```bash
+GROQ_API_KEY=sk-... aksara program.ak
+```
+
+```aksara
+impor "llm.ak" sbg llm
+
+cetak llm.tulis_puisi("bahasa pemrograman Indonesia")
+cetak llm.terjemahkan("Halo dunia", "Jawa")
+```
+
+Contoh agent (AI menulis program Aksara lalu menjalankannya):
+`examples/ai_live/agent_ak.ak`. Demo dasar: `examples/ai_live/llm.ak`.
 
 ## Perintah CLI
 

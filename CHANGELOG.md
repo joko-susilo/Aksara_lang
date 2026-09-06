@@ -4,6 +4,17 @@ Semua perubahan penting proyek Aksara dicatat di sini.
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/);
 versi mengikuti [Semantic Versioning](https://semver.org/).
 
+## [0.11.0] - 2026-09-06
+
+### Ditambahkan
+- `llm.ak`: interaksi dengan LLM (format OpenAI-compatible) dari dalam bahasa
+  Aksara. Fungsi `tanya`, `tulis_puisi`, `ringkas_teks`, `terjemahkan`,
+  `tulis_kode`. API key dari variabel lingkungan (`GROQ_API_KEY`).
+- Contoh `examples/ai_live/agent_ak.ak`: AI menulis program Aksara lalu
+  dimuat & dijalankan dari dalam Aksara sendiri.
+- Contoh `examples/ai_live/llm.ak`: demo dasar LLM.
+- 6 tes offline tambahan (total 106).
+
 ## [0.10.0] - 2026-09-06
 
 ### Ditambahkan
