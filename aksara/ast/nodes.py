@@ -49,6 +49,11 @@ class Nil(ASTNode):
     def __repr__(self):
         return "Nil"
 
+class Ini(ASTNode):
+    """Referensi objek saat ini (mirip 'self'). Hanya valid di dalam metode."""
+    def __repr__(self):
+        return "Ini"
+
 class NamaVariabel(ASTNode):
     def __init__(self, nama: str):
         self.nama = nama
@@ -207,3 +212,12 @@ class ImporLokal(ASTNode):
         self.alias = alias
     def __repr__(self):
         return f"ImporLokal({self.nama_file} sebagai {self.alias})"
+
+
+class DefinisiKelas(ASTNode):
+    """Definisi kelas: nama + daftar metode (DefinisiFungsi)."""
+    def __init__(self, nama: str, metode: list):
+        self.nama = nama
+        self.metode = metode
+    def __repr__(self):
+        return f"DefinisiKelas({self.nama}, {self.metode})"

@@ -228,6 +228,43 @@ cetak tambah(3, 4)   # 7
 - Tanpa `balik`, fungsi mengembalikan `nil`.
 - Fungsi memakai *closure*: bisa membaca variabel dari lingkup pembuatnya.
 
+### Kelas & Objek (OOP)
+
+Deklarasi kelas dengan `kelas`; isi dengan `fun` (metode). Di dalam metode,
+`ini` merujuk objek yang memanggil (mirip `self`). Konstruktor adalah metode
+yang dipanggil lewat `NamaKelas.metode(...)` — membuat objek baru, menjalankan
+metodenya, lalu mengembalikan objek tsb.
+
+```aksara
+kelas Rekening {
+    fun buat(pemilik, saldo_awal) {
+        ini.pemilik = pemilik
+        ini.saldo = saldo_awal
+    }
+    fun tabung(jumlah) {
+        ini.saldo = ini.saldo + jumlah
+        balik ini.saldo
+    }
+    fun info() {
+        balik "Rekening " + ini.pemilik + " saldo " + ini.saldo
+    }
+}
+
+rek = Rekening.buat("Andi", 100000)
+cetak rek.info()          # Rekening Andi saldo 100000
+cetak rek.tabung(50000)   # 150000
+cetak rek.saldo           # 150000
+```
+
+Aturan:
+- `kelas Nama { ... }` memuat metode (fungsi).
+- Panggilan `NamaKelas.metoda(args)` = konstruktor (mengembalikan objek).
+- Panggilan `objek.metoda(args)` memanggil metode pada instance.
+- `ini.atribut = nilai` membaca/menulis atribut objek.
+- Metode dapat memanggil metode lain pada objek yang sama (`ini.metode()`).
+
+Contoh lengkap: `examples/oop.ak`.
+
 ### Kesalahan
 
 Melempar galat:

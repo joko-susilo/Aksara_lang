@@ -45,5 +45,7 @@ KATA_KUNCI = [
     "dan","atau","bukan",
     # Error
     "coba","kecuali","akhirnya",
-    "sebagai","galat"
+    "sebagai","galat",
+    # OOP
+    "kelas", "ini",
 ]

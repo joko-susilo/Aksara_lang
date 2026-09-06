@@ -71,8 +71,10 @@ class Parser:
                 return self.parse_coba()
             elif t.nilai == "galat":
                 return self.parse_galat()
-            elif t.nilai in ("benar", "salah", "nil", "bukan"):
-                # Literal boolean/null atau unary 'bukan' sebagai ekspresi-statement.
+            elif t.nilai == "kelas":
+                return self.parse_kelas()
+            elif t.nilai in ("benar", "salah", "nil", "bukan", "ini"):
+                # Literal boolean/null, unary 'bukan', atau objek 'ini'.
                 return self.parse_ekspresi_stmt()
             else:
                 raise SyntaxError(f"Baris {t.baris}: Kata kunci '{t.nilai}' tidak dikenal di awal statement")
@@ -174,6 +176,21 @@ class Parser:
         ekspresi = self.parse_ekspresi()
         return Balik(ekspresi)
 
+    def parse_kelas(self):
+        self.ambil("KATA_KUNCI", "kelas")
+        nama = self.ambil("NAMA").nilai
+        self.ambil("KURUNG_KUWAL", "{")
+        metode = []
+        while self.lihat().tipe != "KURUNG_KUWAL" or self.lihat().nilai != "}":
+            if self.lihat().tipe == "EOF":
+                raise SyntaxError("Akhir file tak terduga saat mencari '}' untuk kelas")
+            if self.lihat().tipe == "KATA_KUNCI" and self.lihat().nilai == "fun":
+                metode.append(self.parse_fn())
+            else:
+                self.ambil("KATA_KUNCI", "fun")
+        self.ambil("KURUNG_KUWAL", "}")
+        return DefinisiKelas(nama, metode)
+
     def parse_ekspresi_stmt(self):
         ekspr = self.parse_ekspresi()
         if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "=":
@@ -271,6 +288,53 @@ class Parser:
             return OperasiUnary("bukan", ekspr)
         return self.parse_primary()
 
+    def _lanjut_suffix(self, node):
+        """Lanjutkan suffix .atribut / (panggil) / [indeks..slice] setelah sebuah primary."""
+        while True:
+            if self.lihat().tipe == "TITIK":
+                self.ambil("TITIK")
+                attr = self.ambil("NAMA").nilai
+                node = AksesAtribut(node, attr)
+            elif self.lihat().tipe == "KURUNG" and self.lihat().nilai == "(":
+                self.ambil("KURUNG", "(")
+                args = []
+                if self.lihat().tipe != "KURUNG" or self.lihat().nilai != ")":
+                    args.append(self.parse_ekspresi())
+                    while self.lihat().tipe == "KOMA":
+                        self.ambil("KOMA")
+                        args.append(self.parse_ekspresi())
+                self.ambil("KURUNG", ")")
+                node = PanggilFungsi(node, args)
+            elif self.lihat().tipe == "KURUNG_SIKU" and self.lihat().nilai == "[":
+                self.ambil("KURUNG_SIKU", "[")
+                mulai = None
+                akhir = None
+                is_slice = False
+                if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "..":
+                    # bentuk [..akhir]
+                    self.ambil("OPERATOR", "..")
+                    is_slice = True
+                    if not (self.lihat().tipe == "KURUNG_SIKU" and self.lihat().nilai == "]"):
+                        akhir = self.parse_ekspresi()
+                elif not (self.lihat().tipe == "KURUNG_SIKU" and self.lihat().nilai == "]"):
+                    mulai = self.parse_ekspresi()
+                    if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "..":
+                        # bentuk [mulai..] atau [mulai..akhir]
+                        self.ambil("OPERATOR", "..")
+                        is_slice = True
+                        if not (self.lihat().tipe == "KURUNG_SIKU" and self.lihat().nilai == "]"):
+                            akhir = self.parse_ekspresi()
+                self.ambil("KURUNG_SIKU", "]")
+                if is_slice:
+                    node = Slice(node, mulai, akhir)
+                elif mulai is not None:
+                    node = AksesIndeks(node, mulai)
+                else:
+                    raise SyntaxError(f"Baris {self.lihat().baris}: Indeks kosong []")
+            else:
+                break
+        return node
+
     def parse_primary(self):
         t = self.lihat()
 
@@ -322,58 +386,16 @@ class Parser:
             elif t.nilai == "nil":
                 self.ambil("KATA_KUNCI", "nil")
                 return Nil()
+            elif t.nilai == "ini":
+                self.ambil("KATA_KUNCI", "ini")
+                return self._lanjut_suffix(Ini())
             else:
                 raise SyntaxError(f"Baris {t.baris}: Kata kunci '{t.nilai}' tidak dapat digunakan sebagai ekspresi")
 
         # Nama variabel, akses atribut, pemanggilan fungsi, atau akses indeks
         elif t.tipe == "NAMA":
             nama = self.ambil("NAMA").nilai
-            node = NamaVariabel(nama)
-
-            while True:
-                if self.lihat().tipe == "TITIK":
-                    self.ambil("TITIK")
-                    attr = self.ambil("NAMA").nilai
-                    node = AksesAtribut(node, attr)
-                elif self.lihat().tipe == "KURUNG" and self.lihat().nilai == "(":
-                    self.ambil("KURUNG", "(")
-                    args = []
-                    if self.lihat().tipe != "KURUNG" or self.lihat().nilai != ")":
-                        args.append(self.parse_ekspresi())
-                        while self.lihat().tipe == "KOMA":
-                            self.ambil("KOMA")
-                            args.append(self.parse_ekspresi())
-                    self.ambil("KURUNG", ")")
-                    node = PanggilFungsi(node, args)
-                elif self.lihat().tipe == "KURUNG_SIKU" and self.lihat().nilai == "[":
-                    self.ambil("KURUNG_SIKU", "[")
-                    mulai = None
-                    akhir = None
-                    is_slice = False
-                    if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "..":
-                        # bentuk [..akhir]
-                        self.ambil("OPERATOR", "..")
-                        is_slice = True
-                        if not (self.lihat().tipe == "KURUNG_SIKU" and self.lihat().nilai == "]"):
-                            akhir = self.parse_ekspresi()
-                    elif not (self.lihat().tipe == "KURUNG_SIKU" and self.lihat().nilai == "]"):
-                        mulai = self.parse_ekspresi()
-                        if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "..":
-                            # bentuk [mulai..] atau [mulai..akhir]
-                            self.ambil("OPERATOR", "..")
-                            is_slice = True
-                            if not (self.lihat().tipe == "KURUNG_SIKU" and self.lihat().nilai == "]"):
-                                akhir = self.parse_ekspresi()
-                    self.ambil("KURUNG_SIKU", "]")
-                    if is_slice:
-                        node = Slice(node, mulai, akhir)
-                    elif mulai is not None:
-                        node = AksesIndeks(node, mulai)
-                    else:
-                        raise SyntaxError(f"Baris {self.lihat().baris}: Indeks kosong []")
-                else:
-                    break
-            return node
+            return self._lanjut_suffix(NamaVariabel(nama))
 
         # List literal
         elif t.tipe == "KURUNG_SIKU" and t.nilai == "[":

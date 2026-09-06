@@ -21,16 +21,18 @@ import sys
 
 from aksara.ast.nodes import (AksesAtribut, AksesIndeks, Angka, Assign, Balik,
                               Boolean, Cetak, Coba, Daftar, DefinisiFungsi,
-                              Galat, Henti, Impor, ImporLokal, Jika, Kamus,
-                              Lanjut, Nil, OperasiBiner, PanggilFungsi,
-                              Selama, String, Ulangi, Untuk, NamaVariabel)
+                              DefinisiKelas, Galat, Henti, Impor, ImporLokal,
+                              Ini, Jika, Kamus, Lanjut, Nil, OperasiBiner,
+                              PanggilFungsi, Selama, String, Ulangi, Untuk,
+                              NamaVariabel)
 from aksara.lexer.tokenizer import tokenize
 from aksara.parser.parser import Parser
 from aksara.interpreter.environment import Environment
 from aksara.interpreter.evaluator import evaluate
 
-TIPE_STATEMENT = (Assign, Balik, Cetak, Coba, DefinisiFungsi, Galat, Henti,
-                  Impor, ImporLokal, Jika, Lanjut, Selama, Ulangi, Untuk)
+TIPE_STATEMENT = (Assign, Balik, Cetak, Coba, DefinisiFungsi, DefinisiKelas,
+                  Galat, Henti, Impor, ImporLokal, Jika, Lanjut, Selama,
+                  Ulangi, Untuk)
 
 PROMPT = "aksara> "
 PROMPT_LANJUT = "... "

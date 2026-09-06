@@ -14,9 +14,9 @@
 
 from aksara.ast.nodes import (
     Angka, AksesAtribut, AksesIndeks, Assign, Balik, Boolean, Cetak, Coba,
-    Daftar, DefinisiFungsi, Galat, Henti, Impor, ImporLokal, Jika, Kamus,
-    Lanjut, NamaVariabel, Nil, OperasiBiner, OperasiUnary, PanggilFungsi,
-    Selama, Slice, String, Ulangi, Untuk,
+    Daftar, DefinisiFungsi, DefinisiKelas, Galat, Henti, Impor, ImporLokal,
+    Ini, Jika, Kamus, Lanjut, NamaVariabel, Nil, OperasiBiner, OperasiUnary,
+    PanggilFungsi, Selama, Slice, String, Ulangi, Untuk,
 )
 from aksara.interpreter.builtins import BUILTINS
 
@@ -51,6 +51,7 @@ class AksaraCompiler:
         self._builtin_pakai = set()
         self._perlu_muat_lokal = False
         self._perlu_tambah = False
+        self._perlu_oop = False
 
     # ------------------------------------------------------------------
     # API publik
@@ -78,6 +79,9 @@ class AksaraCompiler:
 
         if isinstance(node, Nil):
             return "None"
+
+        if isinstance(node, Ini):
+            return "ini"
 
         if isinstance(node, NamaVariabel):
             return node.nama
@@ -224,6 +228,21 @@ class AksaraCompiler:
         if isinstance(node, Coba):
             return self._stmt_coba(node, pad)
 
+        if isinstance(node, DefinisiKelas):
+            self._perlu_oop = True
+            baris = []
+            for m in node.metode:
+                nama_py = f"_{node.nama}_{m.nama}"
+                param = ", ".join(["ini"] + m.parameter)
+                baris.append(f"{pad}def {nama_py}({param}):")
+                baris += self._blok(m.blok)
+                baris.append("")
+            daftar = ", ".join(
+                f"{m.nama!r}: _{node.nama}_{m.nama}" for m in node.metode
+            )
+            baris.append(f"{pad}{node.nama} = KelasValue({node.nama!r}, {{{daftar}}})")
+            return baris
+
         if isinstance(node, Impor):
             last = node.nama_modul.rsplit(".", 1)[-1]
             if node.alias and node.alias != last and node.alias != node.nama_modul:
@@ -292,6 +311,8 @@ class AksaraCompiler:
             bagian.append(_PENOLONG_IMPOR_LOKAL)
         if self._perlu_tambah:
             bagian.append(_PENOLONG_TAMBAH)
+        if self._perlu_oop:
+            bagian.append(PENOLONG_OOP)
         if self._builtin_pakai:
             impor_baru = []
             for nama in sorted(self._builtin_pakai):
@@ -310,12 +331,15 @@ class AksaraCompiler:
         self._builtin_pakai = set()
         self._perlu_muat_lokal = False
         self._perlu_tambah = False
+        self._perlu_oop = False
 
 
 _PENOLONG_TAMBAH = ("def _ak_tambah(a, b):\n"
                     "    if isinstance(a, str) or isinstance(b, str):\n"
                     "        return str(a) + str(b)\n"
                     "    return a + b\n")
+
+PENOLONG_OOP = "from aksara.interpreter.oop import KelasValue"
 
 
 _PENOLONG_IMPOR_LOKAL = '''import os as __os, types as __types

@@ -4,6 +4,18 @@ Semua perubahan penting proyek Aksara dicatat di sini.
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/);
 versi mengikuti [Semantic Versioning](https://semver.org/).
 
+## [0.8.0] - 2026-09-06
+
+### Ditambahkan
+- OOP: `kelas`, metode (`fun` di dalam kelas), dan `ini` (self).
+  Konstruktor dipanggil lewat `NamaKelas.metode(...)`; instance memakai
+  `obj.metode(...)` dan `obj.atribut`.
+- Parser: suffix `.atribut`/`(panggil)`/`[indeks]` kini berlaku juga untuk
+  `ini` (via `_lanjut_suffix`).
+- Runtime OOP baru `aksara/interpreter/oop.py` (KelasValue, ObjekAksara)
+  dipakai bersama oleh interpreter dan hasil kompilasi.
+- Contoh `examples/oop.ak`, tes `tests/test_oop.py` (total 77 tes).
+
 ## [0.7.0] - 2026-09-06
 
 ### Ditambahkan

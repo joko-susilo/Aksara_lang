@@ -14,10 +14,14 @@
 
 
 
+import sys as _sys
 from aksara.ast.nodes import *
 from aksara.interpreter.environment import Environment
 from aksara.interpreter.builtins import BUILTINS, aksara_impor
+from aksara.interpreter.oop import KelasValue, ObjekAksara, MetodeInterp
 import builtins as py_builtins
+
+_MOD = _sys.modules[__name__]
 
 # Exception untuk alur kontrol
 class ReturnException(Exception):
@@ -67,6 +71,17 @@ def evaluate(node, env):
         return eval_biner(node, env)
     elif isinstance(node, OperasiUnary):
         return eval_unary(node, env)
+
+    elif isinstance(node, Ini):
+        return env.get("ini")
+
+    elif isinstance(node, DefinisiKelas):
+        metode = {}
+        for m in node.metode:
+            metode[m.nama] = MetodeInterp(m, env, _MOD)
+        kelas = KelasValue(node.nama, metode)
+        env.define(node.nama, kelas)
+        return kelas
 
     # --- Pemanggilan Fungsi & Atribut ---
     elif isinstance(node, PanggilFungsi):
@@ -404,6 +419,18 @@ class Fungsi:
     def __call__(self, *argumen):
         """Agar Fungsi bisa dipanggil langsung dari Python luar (interop)."""
         return panggil_fungsi_aksara(self, list(argumen))
+
+def panggil_metode(fungsi, ini_obj, arg_values, closure):
+    """Menjalankan metode Aksara: `ini` diikat ke objek pemanggil."""
+    env_fungsi = Environment(parent=closure)
+    env_fungsi.define("ini", ini_obj)
+    for param, arg in zip(fungsi.parameter, arg_values):
+        env_fungsi.define(param, arg)
+    try:
+        return evaluate(fungsi.blok, env_fungsi)
+    except ReturnException as ret:
+        return ret.value
+
 
 def panggil_fungsi_aksara(fungsi, arg_values):
     """Mengeksekusi fungsi yang didefinisikan dalam Aksara."""
