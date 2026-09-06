@@ -54,6 +54,12 @@ class Ini(ASTNode):
     def __repr__(self):
         return "Ini"
 
+
+class Induk(ASTNode):
+    """Referensi metode induk/super. Hanya valid di dalam metode."""
+    def __repr__(self):
+        return "Induk"
+
 class NamaVariabel(ASTNode):
     def __init__(self, nama: str):
         self.nama = nama
@@ -215,9 +221,11 @@ class ImporLokal(ASTNode):
 
 
 class DefinisiKelas(ASTNode):
-    """Definisi kelas: nama + daftar metode (DefinisiFungsi)."""
-    def __init__(self, nama: str, metode: list):
+    """Definisi kelas: nama + daftar metode (DefinisiFungsi) + (opsional) induk."""
+    def __init__(self, nama: str, metode: list, induk: str = None):
         self.nama = nama
         self.metode = metode
+        self.induk = induk
     def __repr__(self):
-        return f"DefinisiKelas({self.nama}, {self.metode})"
+        d = f" dari {self.induk}" if self.induk else ""
+        return f"DefinisiKelas({self.nama}{d}, {self.metode})"

@@ -18,7 +18,8 @@ import sys as _sys
 from aksara.ast.nodes import *
 from aksara.interpreter.environment import Environment
 from aksara.interpreter.builtins import BUILTINS, aksara_impor
-from aksara.interpreter.oop import KelasValue, ObjekAksara, MetodeInterp
+from aksara.interpreter.oop import (KelasValue, ObjekAksara, MetodeInterp,
+                                    _PranalaInduk)
 import builtins as py_builtins
 
 _MOD = _sys.modules[__name__]
@@ -75,11 +76,23 @@ def evaluate(node, env):
     elif isinstance(node, Ini):
         return env.get("ini")
 
+    elif isinstance(node, Induk):
+        return env.get("induk")
+
     elif isinstance(node, DefinisiKelas):
+        induk = None
+        if node.induk:
+            induk = env.get(node.induk)
+        # Bangun metode dulu; kelas_asal dipakai untuk resolusi 'induk'.
+        kelas = KelasValue(node.nama, {})
         metode = {}
         for m in node.metode:
-            metode[m.nama] = MetodeInterp(m, env, _MOD)
-        kelas = KelasValue(node.nama, metode)
+            metode[m.nama] = MetodeInterp(m, env, _MOD, kelas)
+        # Gabung dengan metode induk (anak menimpa induk).
+        gabungan = dict(induk.metode) if induk is not None else {}
+        gabungan.update(metode)
+        kelas.metode = gabungan
+        kelas.induk = induk if induk is not None else None
         env.define(node.nama, kelas)
         return kelas
 
@@ -420,10 +433,22 @@ class Fungsi:
         """Agar Fungsi bisa dipanggil langsung dari Python luar (interop)."""
         return panggil_fungsi_aksara(self, list(argumen))
 
-def panggil_metode(fungsi, ini_obj, arg_values, closure):
-    """Menjalankan metode Aksara: `ini` diikat ke objek pemanggil."""
+def panggil_metode(fungsi, ini_obj, arg_values, closure, kelas_asal=None):
+    """Menjalankan metode Aksara: `ini` diikat ke objek pemanggil.
+
+    `kelas_asal` adalah kelas tempat metode didefinisikan; `induk` (super)
+    dibangun dari induk kelas itu, bukan kelas objek, agar override bertingkat
+    tidak berulang tak hingga.
+    """
     env_fungsi = Environment(parent=closure)
     env_fungsi.define("ini", ini_obj)
+    # Kelas sumber untuk super: kelas_asal bila diketahui, else kelas objek.
+    if kelas_asal is not None:
+        kelas_super = kelas_asal.induk
+    else:
+        kelas_obj = getattr(ini_obj, "kelas", None)
+        kelas_super = kelas_obj.induk if kelas_obj else None
+    env_fungsi.define("induk", _PranalaInduk(ini_obj, kelas_super))
     for param, arg in zip(fungsi.parameter, arg_values):
         env_fungsi.define(param, arg)
     try:

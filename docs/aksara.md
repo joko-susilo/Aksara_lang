@@ -263,7 +263,29 @@ Aturan:
 - `ini.atribut = nilai` membaca/menulis atribut objek.
 - Metode dapat memanggil metode lain pada objek yang sama (`ini.metode()`).
 
-Contoh lengkap: `examples/oop.ak`.
+#### Pewarisan (inheritance)
+
+`kelas Anak dari Induk { ... }` menurunkan metode induk; metode senama akan
+menimpa (override). Di dalam metode, `induk.metode(...)` memanggil versi
+induk (super), bahkan bertingkat:
+
+```aksara
+kelas Bentuk {
+    fun buat(nama) { ini.nama = nama }
+    fun luas() { balik 0 }
+}
+kelas Persegi dari Bentuk {
+    fun buat(sisi) {
+        induk.buat("persegi")
+        ini.sisi = sisi
+    }
+    fun luas() { balik induk.luas() + ini.sisi * ini.sisi }
+}
+p = Persegi.buat(5)
+cetak p.luas()          # 25
+```
+
+Contoh lengkap: `examples/oop.ak`, `examples/pewarisan.ak`.
 
 ### Kesalahan
 
@@ -335,6 +357,8 @@ Modul-modul dalam folder `stdlib/` (dipakai lewat `impor "modul.ak" sbg x`):
 | `koleksi.ak` | Daftar: `urutkan`, `urutkan_balik`, `unik`, `balik_list`, `gabung_list`, `cari_indeks`, `hitung`, `potong`, `hapus_index` |
 | `berkas.ak` | File: `baca_file`, `baca_baris`, `tulis_file`, `tambah_ke_file`, `apakah_ada`, `hapus_file`, `ukuran_file`, `folder_sekarang`, `daftar_folder`, `wujud_folder` |
 | `waktu.ak` | Waktu: `detik_sekarang`, `waktu_teks`, `waktu_teks_kustom`, `tahun`, `bulan`, `hari`, `jam`, `menit`, `detik`, `tidur` |
+| `ml.ak` | Machine Learning: `latih(X, y)`, `ramal(model, X)` (jaringan saraf numpy bawaan) |
+| `data.ak` | Data & metrik AI: `bagi`, `akurasi`, `galat_rata`, `ambil_selisih` |
 | `larik.ak` | Statistik array: `rata_rata`, `jumlah`, `maksimum` (`terbesar`), `minimum`, `rentang`, `median`, `variansi`, `simpangan_baku`, `normalisasi`, `skala`, `tebak`, `kelompok`, `outlier`, `pola`, `frekuensi` |
 
 Contoh:

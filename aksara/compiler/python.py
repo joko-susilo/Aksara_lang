@@ -15,8 +15,8 @@
 from aksara.ast.nodes import (
     Angka, AksesAtribut, AksesIndeks, Assign, Balik, Boolean, Cetak, Coba,
     Daftar, DefinisiFungsi, DefinisiKelas, Galat, Henti, Impor, ImporLokal,
-    Ini, Jika, Kamus, Lanjut, NamaVariabel, Nil, OperasiBiner, OperasiUnary,
-    PanggilFungsi, Selama, Slice, String, Ulangi, Untuk,
+    Ini, Induk, Jika, Kamus, Lanjut, NamaVariabel, Nil, OperasiBiner,
+    OperasiUnary, PanggilFungsi, Selama, Slice, String, Ulangi, Untuk,
 )
 from aksara.interpreter.builtins import BUILTINS
 
@@ -52,6 +52,7 @@ class AksaraCompiler:
         self._perlu_muat_lokal = False
         self._perlu_tambah = False
         self._perlu_oop = False
+        self._kelas_saat_ini = None
 
     # ------------------------------------------------------------------
     # API publik
@@ -82,6 +83,11 @@ class AksaraCompiler:
 
         if isinstance(node, Ini):
             return "ini"
+
+        if isinstance(node, Induk):
+            if self._kelas_saat_ini:
+                return f"_ak_induk(ini, {self._kelas_saat_ini})"
+            return "_ak_induk(ini)"
 
         if isinstance(node, NamaVariabel):
             return node.nama
@@ -231,16 +237,24 @@ class AksaraCompiler:
         if isinstance(node, DefinisiKelas):
             self._perlu_oop = True
             baris = []
-            for m in node.metode:
-                nama_py = f"_{node.nama}_{m.nama}"
-                param = ", ".join(["ini"] + m.parameter)
-                baris.append(f"{pad}def {nama_py}({param}):")
-                baris += self._blok(m.blok)
-                baris.append("")
+            kelas_lama = self._kelas_saat_ini
+            self._kelas_saat_ini = node.nama
+            try:
+                for m in node.metode:
+                    nama_py = f"_{node.nama}_{m.nama}"
+                    param = ", ".join(["ini"] + m.parameter)
+                    baris.append(f"{pad}def {nama_py}({param}):")
+                    baris += self._blok(m.blok)
+                    baris.append("")
+            finally:
+                self._kelas_saat_ini = kelas_lama
             daftar = ", ".join(
                 f"{m.nama!r}: _{node.nama}_{m.nama}" for m in node.metode
             )
-            baris.append(f"{pad}{node.nama} = KelasValue({node.nama!r}, {{{daftar}}})")
+            induk_kode = f", {node.induk}" if node.induk else ""
+            baris.append(
+                f"{pad}{node.nama} = KelasValue({node.nama!r}, {{{daftar}}}{induk_kode})"
+            )
             return baris
 
         if isinstance(node, Impor):
@@ -339,7 +353,11 @@ _PENOLONG_TAMBAH = ("def _ak_tambah(a, b):\n"
                     "        return str(a) + str(b)\n"
                     "    return a + b\n")
 
-PENOLONG_OOP = "from aksara.interpreter.oop import KelasValue"
+PENOLONG_OOP = ("from aksara.interpreter.oop import KelasValue, _PranalaInduk\n\n"
+                "def _ak_induk(obj, kelas=None):\n"
+                "    k = kelas if kelas is not None else getattr(obj, 'kelas', None)\n"
+                "    l = k.induk if k is not None else None\n"
+                "    return _PranalaInduk(obj, l if l is not None else k)\n")
 
 
 _PENOLONG_IMPOR_LOKAL = '''import os as __os, types as __types

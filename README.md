@@ -2,9 +2,10 @@
 
 "Saya cinta bahasa Indonesia."
 
-**Aksara** adalah bahasa pemrograman modern dengan sintaks bahasa Indonesia,
-berjalan di atas Python 3.8+ (interpreter + transpiler ke Python), nyaman
-digunakan di Termux (Android).
+**Aksara** adalah bahasa pemrograman modern dengan sintaks bahasa Indonesia —
+**AI-first**: jaringan saraf, prediksi, clustering, NLP dan metrik ML built-in
+tanpa setup ekstra. Berjalan di atas Python 3.8+ (interpreter + transpiler ke
+Python), nyaman digunakan di Termux (Android).
 
 Dokumentasi lengkap: [docs/aksara.md](docs/aksara.md)
 
@@ -52,8 +53,23 @@ aksara program.ak
 · Perulangan: `ulang`, `selama`, `untuk a..b` (rentang inklusif), `untuk x dalam daftar`, `henti`, `lanjut`
 · Fungsi: `fun`, `balik` (ber-closure)
 · Kesalahan: `coba`, `kecuali [Tipe] sebagai e`, `akhirnya`, `galat`
+· Objek: `kelas`, `ini` (self), pewarisan `kelas Anak dari Induk`, `induk` (super)
 · Interop: `impor "modul" sbg nama` (modul Python) dan `impor "larik.ak"` (file Aksara)
 · Kompiler: `aksara file.ak -c` menghasilkan Python murni dari program Aksara
+
+## 🤖 AI-first
+
+Latih jaringan saraf, prediksi, dan ukur metrik dalam beberapa baris:
+
+```aksara
+impor "ml.ak" sbg ml
+
+X = [[1], [2], [3], [4], [5], [6], [7], [8]]
+y = [10, 20, 30, 40, 50, 60, 70, 80]
+
+model = ml.latih(X, y)             # pelatihan neural net built-in
+cetak ml.ramal(model, [[9], [10]]) # prediksi 2 langkah berikutnya
+```
 
 ## 🤖 AI Built-in (tanpa library tambahan)
 

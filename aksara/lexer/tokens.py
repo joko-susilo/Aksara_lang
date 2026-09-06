@@ -47,5 +47,5 @@ KATA_KUNCI = [
     "coba","kecuali","akhirnya",
     "sebagai","galat",
     # OOP
-    "kelas", "ini",
+    "kelas", "ini", "dari", "induk",
 ]

@@ -73,8 +73,8 @@ class Parser:
                 return self.parse_galat()
             elif t.nilai == "kelas":
                 return self.parse_kelas()
-            elif t.nilai in ("benar", "salah", "nil", "bukan", "ini"):
-                # Literal boolean/null, unary 'bukan', atau objek 'ini'.
+            elif t.nilai in ("benar", "salah", "nil", "bukan", "ini", "induk"):
+                # Literal boolean/null, unary 'bukan', 'ini' (self), atau 'induk' (super).
                 return self.parse_ekspresi_stmt()
             else:
                 raise SyntaxError(f"Baris {t.baris}: Kata kunci '{t.nilai}' tidak dikenal di awal statement")
@@ -179,6 +179,10 @@ class Parser:
     def parse_kelas(self):
         self.ambil("KATA_KUNCI", "kelas")
         nama = self.ambil("NAMA").nilai
+        induk = None
+        if self.lihat().tipe == "KATA_KUNCI" and self.lihat().nilai == "dari":
+            self.ambil("KATA_KUNCI", "dari")
+            induk = self.ambil("NAMA").nilai
         self.ambil("KURUNG_KUWAL", "{")
         metode = []
         while self.lihat().tipe != "KURUNG_KUWAL" or self.lihat().nilai != "}":
@@ -189,7 +193,7 @@ class Parser:
             else:
                 self.ambil("KATA_KUNCI", "fun")
         self.ambil("KURUNG_KUWAL", "}")
-        return DefinisiKelas(nama, metode)
+        return DefinisiKelas(nama, metode, induk)
 
     def parse_ekspresi_stmt(self):
         ekspr = self.parse_ekspresi()
@@ -389,6 +393,9 @@ class Parser:
             elif t.nilai == "ini":
                 self.ambil("KATA_KUNCI", "ini")
                 return self._lanjut_suffix(Ini())
+            elif t.nilai == "induk":
+                self.ambil("KATA_KUNCI", "induk")
+                return self._lanjut_suffix(Induk())
             else:
                 raise SyntaxError(f"Baris {t.baris}: Kata kunci '{t.nilai}' tidak dapat digunakan sebagai ekspresi")
 

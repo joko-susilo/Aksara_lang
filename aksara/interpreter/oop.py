@@ -21,11 +21,19 @@ dimasukkan secara implisit oleh bahasa.
 
 
 class KelasValue:
-    """Sebuah kelas Aksara: nama + kamus metode {nama: callable(ini, *args)}."""
+    """Sebuah kelas Aksara: nama + kamus metode {nama: callable(ini, *args)}.
 
-    def __init__(self, nama: str, metode: dict):
+    Bila punya induk, kamus metode digabung (metode anak menimpa induk).
+    Metode induk tetap bisa dipanggil lewat objek `_PranalaInduk` (super).
+    """
+
+    def __init__(self, nama: str, metode: dict, induk=None):
         self.nama = nama
-        self.metode = metode
+        self.induk = induk if isinstance(induk, KelasValue) else None
+        if self.induk is not None:
+            self.metode = {**self.induk.metode, **metode}
+        else:
+            self.metode = dict(metode)
 
     def __getattr__(self, nama):
         # Panggilan Kelas.metode(...) = konstruktor: buat objek, jalankan
@@ -35,7 +43,8 @@ class KelasValue:
         raise AttributeError(f"Kelas '{self.nama}' tidak memiliki metode '{nama}'")
 
     def __repr__(self):
-        return f"Kelas {self.nama}"
+        d = f" dari {self.induk.nama}" if self.induk else ""
+        return f"Kelas {self.nama}{d}"
 
 
 class _Pabrik:
@@ -79,14 +88,20 @@ class ObjekAksara:
 
 
 class _MetodeTerikat:
-    """Metode terikat pada instance: objek.metode(args)."""
+    """Metode terikat pada instance: objek.metode(args).
 
-    def __init__(self, obj, nama):
+    `kelas` opsional menentukan sumber kamus metode (mis. kelas induk untuk
+    super). Nilai None berarti memakai kelas objek itu sendiri.
+    """
+
+    def __init__(self, obj, nama, kelas=None):
         self.obj = obj
         self.nama = nama
+        self.kelas = kelas
 
     def __call__(self, *argumen):
-        return self.obj.kelas.metode[self.nama](self.obj, *argumen)
+        sumber = self.kelas if self.kelas is not None else self.obj.kelas
+        return sumber.metode[self.nama](self.obj, *argumen)
 
     def __repr__(self):
         return f"<metode {self.nama} terikat>"
@@ -95,15 +110,37 @@ class _MetodeTerikat:
 class MetodeInterp:
     """Pembungkus metode berbody AST Aksara agar memenuhi kontrak (ini, *args)."""
 
-    def __init__(self, fungsi_node, closure, evaluator):
+    def __init__(self, fungsi_node, closure, evaluator, kelas_asal=None):
         self.fungsi = fungsi_node  # DefinisiFungsi
         self.closure = closure
         self.eval = evaluator
+        self.kelas_asal = kelas_asal
 
     def __call__(self, ini, *argumen):
-        return self.eval.panggil_metode(self.fungsi, ini, argumen, self.closure)
+        return self.eval.panggil_metode(
+            self.fungsi, ini, argumen, self.closure, self.kelas_asal
+        )
 
 
 def def_kelas(nama: str, metode: dict) -> KelasValue:
     """Membangun KelasValue; dipakai hasil kompilasi."""
     return KelasValue(nama, metode)
+
+
+class _PranalaInduk:
+    """Proxy untuk panggil metode induk: `induk.metode(args)`."""
+
+    def __init__(self, obj, kelas_induk):
+        self.obj = obj
+        self.kelas = kelas_induk
+
+    def __getattr__(self, nama):
+        if self.kelas is None:
+            raise AttributeError(f"Tidak ada induk yang bisa dipanggil")
+        if nama in self.kelas.metode:
+            return _MetodeTerikat(self.obj, nama, self.kelas)
+        raise AttributeError(f"Induk '{self.kelas.nama}' tidak memiliki '{nama}'")
+
+    def __repr__(self):
+        nama_induk = self.kelas.nama if self.kelas else "Tidak ada"
+        return f"<induk {nama_induk}>"

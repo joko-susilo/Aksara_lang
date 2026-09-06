@@ -4,6 +4,20 @@ Semua perubahan penting proyek Aksara dicatat di sini.
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/);
 versi mengikuti [Semantic Versioning](https://semver.org/).
 
+## [0.9.0] - 2026-09-06
+
+### Ditambahkan — Visi AI-first
+- Parsing OOP selesai: pewarisan `kelas Anak dari Induk`, override, dan
+  `induk.metode(...)` (super) bertingkat. (0.8.0 menambah kelas/`ini`.)
+- Stdlib AI: `ml.ak` (`latih`, `ramal`) dan `data.ak` (`bagi`, `akurasi`,
+  `galat_rata`, `ambil_selisih`).
+- `ramal()` di `aksara/ai/jaring_syaraf.py`: prediksi dari model yang
+  dilatih; genre jaringan saraf ditingkatkan (standardisasi fitur + init He)
+  sehingga benar-benar belajar.
+- Builtin baru: `ramal`.
+- Contoh `examples/ai_first.ak`, `examples/pewarisan.ak`; tes
+  `tests/test_inherits.py`, `tests/test_ai.py` (total 87 tes).
+
 ## [0.8.0] - 2026-09-06
 
 ### Ditambahkan
