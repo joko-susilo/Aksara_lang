@@ -297,12 +297,36 @@ Statistik & transformasi array: `rata_rata`, `jumlah`, `maksimum`,
 ## Perintah CLI
 
 ```bash
+aksara                    # masuk REPL interaktif
 aksara program.ak        # jalankan
 aksara program.ak -t     # tampilkan token hasil lexer
 aksara program.ak -a     # tampilkan AST
 aksara program.ak -c     # kompilasi ke Python (output di stdout)
 aksara -v                # versi
 ```
+
+### REPL Interaktif
+
+Tanpa argumen file, Aksara membuka REPL:
+
+```
+aksara> 1 + 1
+2
+aksara> nama = "Eka"
+aksara> "Halo " + nama
+'Halo Eka'
+aksara> x = 5
+aksara> jika x > 3 {
+...    cetak "besar"
+... }
+besar
+```
+
+- Ekspresi murni otomatis dicetak nilainya; boolean tampil `benar`/`salah`.
+- Environment persisten: variabel & fungsi bertahan antar baris.
+- Blok `{ }` yang belum seimbang memunculkan prompt lanjutan `...`.
+- Fungsi panjang bisa ditulis dalam mode blok: baris awal `:`, akhiri `:EOF`.
+- Keluar dengan `keluar`, `quit`, `exit`, atau Ctrl-D.
 
 ## Arsitektur
 

@@ -71,6 +71,9 @@ class Parser:
                 return self.parse_coba()
             elif t.nilai == "galat":
                 return self.parse_galat()
+            elif t.nilai in ("benar", "salah", "nil", "bukan"):
+                # Literal boolean/null atau unary 'bukan' sebagai ekspresi-statement.
+                return self.parse_ekspresi_stmt()
             else:
                 raise SyntaxError(f"Baris {t.baris}: Kata kunci '{t.nilai}' tidak dikenal di awal statement")
         elif t.tipe == "NAMA":

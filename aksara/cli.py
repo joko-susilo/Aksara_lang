@@ -34,6 +34,10 @@ def main():
         print(f"Aksara v{__version__}")
         return
 
+    if args.file is None:
+        from aksara.repl import main_repl
+        raise SystemExit(main_repl())
+
     with open(args.file, 'r', encoding='utf-8') as f:
         kode = f.read()
 

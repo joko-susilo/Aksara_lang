@@ -4,6 +4,20 @@ Semua perubahan penting proyek Aksara dicatat di sini.
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/);
 versi mengikuti [Semantic Versioning](https://semver.org/).
 
+## [0.6.1] - 2026-09-06
+
+### Ditambahkan
+- REPL interaktif: `aksara` tanpa argumen file membuka prompt `aksara>`,
+  environment persisten antar baris, nilai ekspresi murni dicetak otomatis
+  (boolean tampil `benar`/`salah`), blok multi-baris dicari hingga `{ }`
+  seimbang, mode blok panjang dengan baris `:` diakhiri `:EOF`.
+  Keluar dengan `keluar`/`quit`/`exit` atau Ctrl-D.
+- Literal boolean/null dan `bukan` kini bisa menjadi awal statement
+  (`benar dan salah` valid); `tests/test_repl.py` (8 tes).
+
+### Diperbaiki
+- Output `cetak` di REPL dialihkan ke aliran REPL (tidak bocor ke stdout).
+
 ## [0.6.0] - 2026-09-06
 
 ### Ditambahkan
