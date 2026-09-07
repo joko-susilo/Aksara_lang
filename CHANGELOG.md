@@ -4,6 +4,16 @@ Semua perubahan penting proyek Aksara dicatat di sini.
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/);
 versi mengikuti [Semantic Versioning](https://semver.org/).
 
+## [0.14.0] - 2026-09-07
+
+### Ditambahkan
+- Klasifikasi dengan jaringan saraf sendiri: `jaring_klasifikasi`
+  (1 hidden layer, softmax + cross-entropy) dan `ramal_klasifikasi`.
+- Stdlib `ml.ak`: `latih_klasifikasi`, `ramal_klasifikasi`.
+- Portofolio demo 5: `examples/ai_live/klasifikasi.ak` — 3 kategori,
+  akurasi 100%, generalisasi ke data baru.
+- Tes tambahan (total 120).
+
 ## [0.13.0] - 2026-09-07
 
 ### Ditambahkan

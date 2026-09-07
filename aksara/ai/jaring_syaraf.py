@@ -67,6 +67,80 @@ def jaring_syaraf(X, y, hidden=8, iterasi=500, laju=0.1):
     }
 
 
+def jaring_klasifikasi(X, y, hidden=8, iterasi=500, laju=0.1):
+    """Jaringan saraf klasifikasi (1 hidden layer, softmax + cross-entropy).
+
+    Label y: bilangan bulat 0..(jumlah-kelas-1). Mengembalikan kamus bobot +
+    penskalaan fitur + jumlah kelas; prediksi lewat `ramal_klasifikasi`.
+    """
+    X = np.array(X, dtype=float)
+    y = np.array(y, dtype=int).reshape(-1)
+    n_kelas = int(y.max()) + 1
+
+    x_mean = X.mean(axis=0)
+    x_std = X.std(axis=0) + 1e-9
+    Xs = (X - x_mean) / x_std
+
+    # One-hot label
+    Y = np.zeros((len(y), n_kelas))
+    Y[np.arange(len(y)), y] = 1
+
+    n_input = Xs.shape[1]
+    np.random.seed(0)
+    W1 = np.random.randn(n_input, hidden) * np.sqrt(2.0 / n_input)
+    b1 = np.zeros((1, hidden))
+    W2 = np.random.randn(hidden, n_kelas) * np.sqrt(2.0 / hidden)
+    b2 = np.zeros((1, n_kelas))
+
+    for _ in range(iterasi):
+        z1 = Xs @ W1 + b1
+        a1 = np.maximum(0, z1)  # ReLU
+        z2 = a1 @ W2 + b2
+        # Softmax
+        e = np.exp(z2 - z2.max(axis=1, keepdims=True))
+        p = e / e.sum(axis=1, keepdims=True)
+        # Cross-entropy gradient
+        dz2 = p - Y
+        dW2 = a1.T @ dz2 / len(Xs)
+        db2 = dz2.mean(axis=0, keepdims=True)
+        dz1 = dz2 @ W2.T
+        dz1[z1 <= 0] = 0
+        dW1 = Xs.T @ dz1 / len(Xs)
+        db1 = dz1.mean(axis=0, keepdims=True)
+
+        W1 -= laju * dW1
+        b1 -= laju * db1
+        W2 -= laju * dW2
+        b2 -= laju * db2
+
+    return {
+        "W1": W1.tolist(), "b1": b1.tolist(),
+        "W2": W2.tolist(), "b2": b2.tolist(),
+        "x_mean": x_mean.tolist(), "x_std": x_std.tolist(),
+        "n_kelas": int(n_kelas),
+    }
+
+
+def ramal_klasifikasi(model, X):
+    """Kembalikan kelas prediksi (list int) untuk tiap baris X."""
+    X = np.array(X, dtype=float)
+    if X.ndim == 1:
+        X = X.reshape(1, -1)
+    W1 = np.array(model["W1"])
+    b1 = np.array(model["b1"])
+    W2 = np.array(model["W2"])
+    b2 = np.array(model["b2"])
+    x_mean = np.array(model["x_mean"])
+    x_std = np.array(model["x_std"])
+
+    Xs = (X - x_mean) / x_std
+    z1 = Xs @ W1 + b1
+    a1 = np.maximum(0, z1)
+    z2 = a1 @ W2 + b2
+    pred = z2.argmax(axis=1)
+    return [int(v) for v in pred]
+
+
 def ramal(model, X):
     """Prediksi dari model yang dilatih `jaring_syaraf` (forward pass)."""
     X = np.array(X, dtype=float)

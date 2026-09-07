@@ -380,7 +380,7 @@ Modul-modul dalam folder `stdlib/` (dipakai lewat `impor "modul.ak" sbg x`):
 | `koleksi.ak` | Daftar: `urutkan`, `urutkan_balik`, `unik`, `balik_list`, `gabung_list`, `cari_indeks`, `hitung`, `potong`, `hapus_index` |
 | `berkas.ak` | File: `baca_file`, `baca_baris`, `tulis_file`, `tambah_ke_file`, `apakah_ada`, `hapus_file`, `ukuran_file`, `folder_sekarang`, `daftar_folder`, `wujud_folder` |
 | `waktu.ak` | Waktu: `detik_sekarang`, `waktu_teks`, `waktu_teks_kustom`, `tahun`, `bulan`, `hari`, `jam`, `menit`, `detik`, `tidur` |
-| `ml.ak` | Machine Learning: `latih(X, y, hidden, iterasi, laju)`, `ramal(model, X)` (jaringan saraf numpy bawaan) |
+| `ml.ak` | Machine Learning: `latih`, `ramal` (regresi), `latih_klasifikasi`, `ramal_klasifikasi` (softmax) |
 | `model.ak` | Simpan/muat model: `simpan(model, jalan)`, `muat(jalan)` (JSON) |
 | `vektor.ak` | Vektor: `dot`, `norma`, `normalisasi`, `kosinus`, `jumlah` |
 | `data.ak` | Data & metrik AI: `bagi`, `akurasi`, `galat_rata`, `ambil_selisih` |

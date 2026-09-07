@@ -137,6 +137,44 @@ fitur + metrik kemiripan, tanpa library eksternal.
 
 ---
 
+## 4B. Klasifikasi — jaringan saraf softmax (model sendiri)
+
+**Masalah:** dari dua fitur (ukuran lebar × tinggi), tentukan 3 kategori.
+Semua dari nol: 1 hidden layer + softmax + cross-entropy (numpy), bukan API.
+
+**Kode** (`examples/ai_live/klasifikasi.ak`):
+
+```aksara
+impor "ml.ak" sbg ml
+
+X = [[1,1],[1,2],[2,1],[2,2],     # kecil
+     [8,1],[9,1],[8,2],[9,2],     # sedang
+     [8,8],[9,8],[8,9],[9,9]]     # besar
+y = [0,0,0,0, 1,1,1,1, 2,2,2,2]
+
+model = ml.latih_klasifikasi(X, y, 10, 1500, 0.3)
+cetak ml.ramal_klasifikasi(model, X)               # prediksi data latih
+cetak ml.ramal_klasifikasi(model, [[8.1,9.2]])     # data baru -> besar
+```
+
+**Hasil asli:**
+
+```
+== Latih jaringan saraf klasifikasi (12 data, 3 kelas) ==
+Prediksi data latih: [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2]
+Akurasi data latih: 100.0% (12/12)
+
+== Prediksi data baru ==
+ukuran 1.7x1.4 -> kategori kecil
+ukuran 8.1x9.2 -> kategori besar
+ukuran 9.9x1.1 -> kategori sedang
+```
+
+**Yang ditunjukkan:** membangun model klasifikasi sendiri (softmax +
+cross-entropy), generalisasi ke data yang belum pernah dilihat.
+
+---
+
 ## 5. Integrasi LLM (butuh API key)
 
 `examples/ai_live/llm.ak` & `agent_ak.ak` — memanggil model bahasa (Groq/

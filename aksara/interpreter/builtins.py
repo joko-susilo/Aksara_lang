@@ -34,7 +34,8 @@ from aksara.ai.ekstrak_entitas import ekstrak_entitas
 from aksara.ai.simulasi_keputusan import simulasi_keputusan
 from aksara.ai.rangking_tfidf import rangking_tfidf
 from aksara.ai.pca import pca
-from aksara.ai.jaring_syaraf import jaring_syaraf, ramal
+from aksara.ai.jaring_syaraf import (jaring_syaraf, ramal, jaring_klasifikasi,
+                                     ramal_klasifikasi)
 from aksara.ai.klasifikasi import jenis
 def aksara_cetak(*args):
     """Fungsi cetak bawaan (versi fungsi, bukan statement)."""
@@ -170,6 +171,8 @@ BUILTINS = {
     "pca": pca,
     "jaring_syaraf": jaring_syaraf,
     "ramal": ramal,
+    "jaring_klasifikasi": jaring_klasifikasi,
+    "ramal_klasifikasi": ramal_klasifikasi,
     "jenis":jenis,
     
 }

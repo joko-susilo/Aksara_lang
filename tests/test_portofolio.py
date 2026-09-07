@@ -103,8 +103,31 @@ def test_larik_median_variansi_outlier():
 
 
 # ------------------------------------------------------------------
-# Demo portofolio tetap jalan (regresi/latih deterministik)
+# Klasifikasi (jaringan saraf softmax)
 # ------------------------------------------------------------------
+def test_klasifikasi_akurasi():
+    kode = (
+        'impor "ml.ak" sbg ml\n'
+        "X = [[1,1],[1,2],[2,1],[2,2],\n"
+        "     [8,1],[9,1],[8,2],[9,2],\n"
+        "     [8,8],[9,8],[8,9],[9,9]]\n"
+        "y = [0,0,0,0, 1,1,1,1, 2,2,2,2]\n"
+        "model = ml.latih_klasifikasi(X, y, 10, 1500, 0.3)\n"
+        "pred = ml.ramal_klasifikasi(model, X)\n"
+        "cetak pred\n"
+        "cocok = 0\n"
+        "untuk i dalam 0..panjang(y)-1 {\n"
+        "  jika pred[i] == y[i] { cocok = cocok + 1 }\n"
+        "}\n"
+        "cetak cocok\n"
+        "cetak ml.ramal_klasifikasi(model, [[8.1, 9.2], [1.5, 1.5]])\n"
+    )
+    out = keluaran_interp(kode)
+    assert "[2, 0]" in out          # baru -> besar & kecil
+    assert "12\n" in out            # semua data latih cocok
+    cek_setara(kode)
+
+
 def test_portofolio_regresi_deterministik(tmp_path):
     jalan = (tmp_path / "m.aksm").as_posix()
     kode = (
