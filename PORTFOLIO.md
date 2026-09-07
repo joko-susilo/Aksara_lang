@@ -175,6 +175,43 @@ cross-entropy), generalisasi ke data yang belum pernah dilihat.
 
 ---
 
+## 5B. Mini LM — model bahasa dilatih sendiri (transformer dari nol)
+
+**Masalah:** latih "AI bahasa" sendiri — model transformer kecil (embedding +
+attention + posisi) dilatih dari teks bahasa Indonesia, tanpa API orang.
+
+**Kode** (`examples/ai_live/mini_lm.ak` + `aksara/ai/model_kecil.py`):
+
+```aksara
+impor "berkas.ak" sbg f
+impor "mini_lm.ak" sbg m
+
+isi = f.baca_file("examples/ai_live/korpus.txt")
+model = m.latih_teks(isi, blok = 16, tersembunyi = 48, kepala = 2,
+                     lapisan = 1, iterasi = 1200, laju = 0.01,
+                     benih = 0, kata = benar)
+cetak m.tulis(model, "bahasa indonesia", panjang = 24, suhu = 0.8)
+```
+
+**Hasil asli** (diprediksi oleh model kita sendiri):
+
+```
+== Latih model bahasa sendiri dari korpus Indonesia ==
+Korpus: 3591 karakter
+Pelatihan selesai.
+
+Model menulis (mode kata):
+bahasa indonesia dipakai oleh ilmu sama penting pulau jawa sumatera
+kalimantan sulawesi dan bahasa indonesia. aksara kita belajar sendiri.
+hasilnya bisa berbicara dan berjiwa gotong royong.
+```
+
+**Yang ditunjukkan:** membangun model *language model* dari nol
+(backprop, Adam, attention) di CPU dalam hitungan menit, lalu model bisa
+menulis kalimat berbahasa Indonesia. Bobot benar-benar milik kita.
+
+---
+
 ## 5. Integrasi LLM (butuh API key)
 
 `examples/ai_live/llm.ak` & `agent_ak.ak` — memanggil model bahasa (Groq/

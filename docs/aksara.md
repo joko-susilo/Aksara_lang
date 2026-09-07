@@ -383,6 +383,7 @@ Modul-modul dalam folder `stdlib/` (dipakai lewat `impor "modul.ak" sbg x`):
 | `ml.ak` | Machine Learning: `latih`, `ramal` (regresi), `latih_klasifikasi`, `ramal_klasifikasi` (softmax) |
 | `model.ak` | Simpan/muat model: `simpan(model, jalan)`, `muat(jalan)` (JSON) |
 | `vektor.ak` | Vektor: `dot`, `norma`, `normalisasi`, `kosinus`, `jumlah` |
+| `mini_lm.ak` | Model bahasa kecil dilatih sendiri: `latih_teks(isi, ...)`, `tulis(model, awal, panjang, suhu)` (numpy) |
 | `data.ak` | Data & metrik AI: `bagi`, `akurasi`, `galat_rata`, `ambil_selisih` |
 | `json.ak` | JSON: `urai(teks)`, `ubah(data)`, `ubah_indah(data)` |
 | `csv.ak` | CSV: `baca(jalan)`, `tulis(jalan, baris)`, `baca_kamus(jalan)` |

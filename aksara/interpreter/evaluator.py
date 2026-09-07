@@ -460,9 +460,9 @@ class Fungsi:
         self.closure = closure  # environment tempat fungsi didefinisikan (closure)
         self.parameter_default = parameter_default or [None] * len(parameter)
 
-    def __call__(self, *argumen):
+    def __call__(self, *argumen, **kunci):
         """Agar Fungsi bisa dipanggil langsung dari Python luar (interop)."""
-        return panggil_fungsi_aksara(self, list(argumen))
+        return panggil_fungsi_aksara(self, list(argumen), kunci)
 
 def panggil_metode(fungsi, ini_obj, arg_values, closure, kelas_asal=None, arg_kunci=None):
     """Menjalankan metode Aksara: `ini` diikat ke objek pemanggil.

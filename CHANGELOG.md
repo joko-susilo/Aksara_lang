@@ -4,6 +4,19 @@ Semua perubahan penting proyek Aksara dicatat di sini.
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id/1.1.0/);
 versi mengikuti [Semantic Versioning](https://semver.org/).
 
+## [0.15.0] - 2026-09-07
+
+### Ditambahkan
+- **Mini LM**: model bahasa karakter/kata dilatih dari nol (`aksara/ai/model_kecil.py`):
+  transformer kecil (embedding + posisi + attention multi-kepala + residual),
+  mode kata atau karakter, Adam; dipakai lewat `mini_lm.ak`
+  (`latih_teks`, `tulis`).
+- Portofolio demo 6: `examples/ai_live/mini_lm.ak` — latih dari korpus
+  Indonesia (3,5KB) di CPU, model menulis kalimat sendiri (hasil asli di
+  PORTFOLIO.md).
+- `Fungsi.__call__` kini menerima keyword untuk interop dari kode terkompilasi.
+- Tes tambahan (total 122).
+
 ## [0.14.0] - 2026-09-07
 
 ### Ditambahkan

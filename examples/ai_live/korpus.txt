@@ -1,0 +1,74 @@
+bahasa pemrograman aksara adalah bahasa indonesia untuk kecerdasan buatan.
+dengan aksara kita bisa melatih jaringan saraf langsung dari kode yang sederhana.
+misalnya kita belajar memprediksi harga rumah dari luas bangunan.
+atau mengelompokkan ulasan menjadi positif dan negatif.
+aksara juga bisa memanggil model bahasa besar lewat internet.
+tetapi semua itu bisa dilakukan dengan kata kata berbahasa indonesia.
+
+indonesia adalah negara kepulauan terbesar di dunia.
+pulau jawa sumatera kalimantan sulawesi dan papua menjadi satu kesatuan.
+jakarta adalah ibu kota negara dan kota terbesar.
+penduduknya ramah suka bekerjasama dan berjiwa gotong royong.
+bahasa indonesia dipakai oleh jutaan manusia di seluruh nusantara.
+kita bangga bisa berbicara dan berpikir dalam bahasa indonesia.
+
+kami belajar pemrograman setiap minggu di sanggar digital.
+pada hari senin kami belajar matematika dan logika.
+pada hari selasa kami belajar struktur data.
+pada hari rabu kami belajar kecerdasan buatan.
+pada hari kamis kami menulis contoh program.
+pada hari jumat kami berolahraga dan bersenang senang.
+kegiatan ini membuat kami semakin pintar dan bersemangat.
+guru kami selalu mengingatkan bahwa belajar itu menyenangkan.
+
+kode aksara itu mudah dibaca dan mudah diingat.
+fungsi ditulis dengan kata fun di awal baris.
+jika kondisi benar maka program menjalankan blok pernyataan.
+kata cetak digunakan untuk menampilkan teks ke layar.
+kata ulang digunakan untuk mengulang pekerjaan beberapa kali.
+kata balik mengembalikan nilai dari sebuah fungsi.
+dengan latihan rutin setiap hari kita menjadi mahir.
+bahasa indonesia membuat belajar terasa jauh lebih ringan.
+
+pagi hari kami pergi ke pasar membeli sayur dan ikan.
+ibu memasak sayur sop dan ikan bakar yang harum.
+ayah membaca koran sambil minum kopi di teras.
+kakak bermain piano dan adik menggambar pemandangan.
+setelah makan siang kami membersihkan rumah bersama.
+malam harinya keluarga berkumpul bercerita dan tertawa.
+kehidupan sederhana yang penuh kebahagiaan.
+
+hujan turun sejak sore hari mengguyur halaman rumah.
+air tergenang di jalan dan kucing berteduh di bawah kursi.
+pohon mangga di belakang rumah semakin hijau.
+udara segar dan sejuk terasa menenangkan hati.
+burung burung bernyanyi riang di dahan pohon.
+anak anak bermain hujan hingga pakaian basah kuyup.
+senja datang perlahan mengganti siang yang ramai.
+
+teknologi tumbuh sangat cepat di zaman sekarang.
+ponsel pintar ada di tangan hampir setiap orang.
+internet menghubungkan desa dan kota dalam sekejap.
+kita bisa belajar apa saja dari layar kecil itu.
+namun teknologi baru bermakna saat digunakan dengan bijak.
+kita harus menjaga waktu bermain dan waktu belajar.
+gadgetnya hanya alat sedangkan pikiran tetap milik kita.
+gunakan teknologi untuk kebaikan bersama.
+
+jaringan saraf bekerja meniru cara otak bekerja.
+neuron kecil saling terhubung dan belajar dari contoh.
+semakin banyak contoh maka makin pintar modelnya.
+itulah dasar dari kecerdasan buatan yang kita kenal.
+dengan aksara proses ini bisa ditulis secara sederhana.
+kita menentukan data kemudian model belajar sendiri.
+hasilnya bisa dipakai untuk membantu keputusan manusia.
+kecerdasan buatan adalah alat bukan pengganti manusia.
+
+membaca buku adalah jendela dunia yang tiada habisnya.
+sejarah mengajarkan kita tentang perjalanan bangsa.
+sains membuka rahasia alam semesta yang luas.
+matematika melatih kita berpikir tepat dan runtut.
+seni menumbuhkan kepekaan dan keindahan jiwa.
+olahraga menjaga tubuh agar tetap sehat dan kuat.
+semua ilmu sama penting dan saling melengkapi.
+belajar sepanjang hayat adalah kunci masa depan cerah.
