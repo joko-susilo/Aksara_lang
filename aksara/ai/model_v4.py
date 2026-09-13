@@ -321,7 +321,7 @@ if __name__ == "__main__":
     elif args.train:
         korpus = open(args.train, encoding="utf-8", errors="replace").read()
         from .tokenizer_bpe import latih as siap_bpe, ubah_ke_id
-        mbpe = siap_bpe(korpus, 400)
+        mbpe = siap_bpe(korpus, 400, maks_char=2_000_000)
         ids = ubah_ke_id(mbpe, korpus)
         print(f"corpus {len(korpus)} char -> {len(ids)} token (vocab 400)")
         res = latih_v4(ids, d=args.d, kepala=4, lapisan=args.lapisan, E=2,
