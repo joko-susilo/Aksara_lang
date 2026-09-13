@@ -85,7 +85,35 @@ def _tetapkan(target, nilai, env):
         raise RuntimeError(f"Target assignment tidak didukung: {type(target).__name__}")
 
 
+_ERROR_BERPOSISI = (RuntimeError, TypeError, NameError, IndexError, KeyError,
+                    ValueError, ZeroDivisionError, AttributeError)
+
+
+def _pos(node):
+    """Label posisi utk error: '[baris N]' kalau node bawa baris."""
+    b = getattr(node, "baris", None)
+    return f" [baris {b}]" if b else ""
+
+
 def evaluate(node, env):
+    """Mengevaluasi node AST; tambahkan posisi baris ke error runtime."""
+    try:
+        return _eval(node, env)
+    except (ReturnException, BreakException, ContinueException):
+        raise
+    except _ERROR_BERPOSISI as e:
+        # jangan dobel-tempel kalau pesannya sudah ada posisinya
+        if "[baris" in str(e):
+            raise
+        menambah = _pos(node)
+        if not menambah:
+            raise
+        # pertahankan tipe asli (penting utk kecuali [Tipe])
+        klas = type(e)
+        raise klas(f"{e}{menambah}") from None
+
+
+def _eval(node, env):
     """Mengevaluasi sebuah node AST di dalam environment yang diberikan."""
 
     # --- Literal ---
@@ -154,6 +182,9 @@ def evaluate(node, env):
         fungsi = Fungsi(node.nama, node.parameter, node.blok, env, node.parameter_default)
         env.define(node.nama, fungsi)
         return fungsi
+    elif isinstance(node, FungsiEkspresi):
+        # fungsi anonim: closure ke environment sekarang
+        return Fungsi(None, node.parameter, node.blok, env, node.parameter_default)
     elif isinstance(node, AksesIndeks):
         obj = evaluate(node.objek, env)
         indeks = evaluate(node.indeks, env)

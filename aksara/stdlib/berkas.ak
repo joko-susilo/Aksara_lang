@@ -4,6 +4,7 @@
 
 impor "builtins" sbg b
 impor "os" sbg os
+impor "json" sbg jmod
 
 fun baca_file(jalan) {
     f = b.open(jalan)
@@ -43,6 +44,25 @@ fun hapus_file(jalan) {
 
 fun ukuran_file(jalan) {
     balik os.path.getsize(jalan)
+}
+
+fun buat_folder(jalan) {
+    jika bukan os.path.exists(jalan) {
+        os.makedirs(jalan)
+    }
+}
+
+fun tulis_json(jalan, data) {
+    f = b.open(jalan, "w")
+    jmod.dump(data, f, indent=1)
+    f.close()
+}
+
+fun muat_json(jalan) {
+    f = b.open(jalan, "r")
+    d = jmod.load(f)
+    f.close()
+    balik d
 }
 
 fun folder_sekarang() {

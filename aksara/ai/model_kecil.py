@@ -200,6 +200,9 @@ def tulis(model, awal="", panjang=80, suhu=1.0, benih=0):
 
     awal_tok = awal.split() if mode_kata else list(awal)
     ix = [c2i[c] for c in awal_tok if c in c2i]
+    if not ix:
+        # seed default: token/token eksis (biar tidak zero-size)
+        ix = [0] if 0 in c2i.values() else [next(iter(c2i.values()))]
     hasil = awal_tok[:]
 
     def fwd(x):

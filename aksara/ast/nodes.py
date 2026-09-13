@@ -137,6 +137,16 @@ class Jika(ASTNode):
     def __repr__(self):
         return f"Jika({self.kondisi}, {self.blok_jika}, cabang={self.cabang_lain})"
 
+
+class FungsiEkspresi(ASTNode):
+    """Fungsi anonim (lambda): fun(parameter){blok} sbg ekspresi."""
+    def __init__(self, parameter: list, blok: list, parameter_default=None):
+        self.parameter = parameter
+        self.blok = blok
+        self.parameter_default = parameter_default or []
+    def __repr__(self):
+        return f"FungsiEkspresi({self.parameter}, {self.blok})"
+
 class DefinisiFungsi(ASTNode):
     def __init__(self, nama: str, parameter: list, blok: list, parameter_default=None):
         self.nama = nama

@@ -55,6 +55,13 @@ class Parser:
     # Statement
     # ----------------------------------------------------------------------
     def parse_statement(self):
+        brs = self.lihat().baris
+        node = self._parse_statement( brs)
+        if node is not None:
+            node.baris = getattr(node, "baris", None) or brs
+        return node
+
+    def _parse_statement(self, brs):
         t = self.lihat()
         if t.tipe == "KATA_KUNCI":
             if t.nilai == "jika":
@@ -191,6 +198,34 @@ class Parser:
         self.ambil("KURUNG", ")")
         blok = self.parse_blok()
         return DefinisiFungsi(nama, parameter, blok, parameter_default)
+
+    def parse_fun_ekspresi(self):
+        """Fungsi anonim: fun(parameter){blok} — dipakai sbg ekspresi (lambda)."""
+        self.ambil("KATA_KUNCI", "fun")
+        self.ambil("KURUNG", "(")
+        parameter = []
+        parameter_default = []
+        if self.lihat().tipe == "NAMA":
+            nama_p = self.ambil("NAMA").nilai
+            default = None
+            if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "=":
+                self.ambil("OPERATOR", "=")
+                default = self.parse_ekspresi()
+            parameter.append(nama_p)
+            parameter_default.append(default)
+        while self.lihat().tipe == "KOMA":
+            self.ambil("KOMA")
+            if not (self.lihat().tipe == "KURUNG" and self.lihat().nilai == ")"):
+                nama_p = self.ambil("NAMA").nilai
+                default = None
+                if self.lihat().tipe == "OPERATOR" and self.lihat().nilai == "=":
+                    self.ambil("OPERATOR", "=")
+                    default = self.parse_ekspresi()
+                parameter.append(nama_p)
+                parameter_default.append(default)
+        self.ambil("KURUNG", ")")
+        blok = self.parse_blok()
+        return FungsiEkspresi(parameter, blok, parameter_default)
 
     def parse_cetak(self):
         self.ambil("KATA_KUNCI", "cetak")
@@ -384,6 +419,10 @@ class Parser:
 
     def parse_primary(self):
         t = self.lihat()
+
+        # Fungsi anonim (lambda): fun(a,b){...}
+        if t.tipe == "KATA_KUNCI" and t.nilai == "fun":
+            return self.parse_fun_ekspresi()
 
         # Literal angka
         if t.tipe == "ANGKA":

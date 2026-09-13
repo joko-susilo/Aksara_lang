@@ -14,7 +14,7 @@
 
 from aksara.ast.nodes import (
     Angka, AksesAtribut, AksesIndeks, Assign, AssignOp, Balik, Boolean, Cetak,
-    Coba, Daftar, DefinisiFungsi, DefinisiKelas, Galat, Henti, Impor,
+    Coba, Daftar, DefinisiFungsi, DefinisiKelas, FungsiEkspresi, Galat, Henti, Impor,
     ImporLokal, Ini, Induk, Jika, Kamus, Lanjut, NamaVariabel, Nil,
     OperasiBiner, OperasiUnary, PanggilFungsi, Selama, Slice, String, Ulangi,
     Untuk,
@@ -70,6 +70,18 @@ class AksaraCompiler:
     # Ekspresi
     # ------------------------------------------------------------------
     def _expr(self, node) -> str:
+        if isinstance(node, FungsiEkspresi):
+            # lambda: blok satu-balik -> (lambda p: e); selain itu definisikan
+            # fungsi temp di dalam ekspresi via lambda-call.
+            if (len(node.blok) == 1 and isinstance(node.blok[0], Balik)
+                    and node.blok[0].ekspresi is not None):
+                params = ", ".join(node.parameter)
+                bodi = self._expr(node.blok[0].ekspresi)
+                return f"(lambda {params}: {bodi})"
+            raise NotImplementedError(
+                "Kompilasi fungsi anonim kompleks (blok multi-statemen) belum "
+                "didukung — gunakan fun bernama utk mode --compile.")
+
         if isinstance(node, Angka):
             return str(node.nilai)
 
